@@ -1,0 +1,21 @@
+Daily Runner — Generated Summary
+-------------------------------
+
+Date: 2025-11-26
+
+Top Highlights
+- 4 new notes ingested from `notes/` and Slack export
+- 3 action items identified and converted into issues
+
+Summary
+The runner pulled recent notes, deduplicated entries, and produced a short, stakeholder-ready summary. Key outcomes include a consolidated list of priorities for the day, links to supporting notes, and an appended short log for traceability.
+
+Action items
+1) Implement automated data pull for sales pipeline (assigned to @alice)
+2) Fix daily report export script failing on edge cases (assigned to @dev)
+3) Draft investor-ready bulleted summary for next meeting (assigned to @kamar)
+
+Logs / Metadata
+- runner-version: 0.1.0
+- runtime: python 3.11 (venv)
+- duration: 24s

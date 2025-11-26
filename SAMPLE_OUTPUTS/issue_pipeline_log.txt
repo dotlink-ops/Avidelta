@@ -1,0 +1,8 @@
+[2025-11-26T10:12:03Z] INFO: Starting issue pipeline
+[2025-11-26T10:12:04Z] DEBUG: OpenAI prompt sent (sanitized) — summary extraction for note 1
+[2025-11-26T10:12:05Z] INFO: Generated issue title: "Fix daily report export on edge cases"
+[2025-11-26T10:12:06Z] INFO: Created GitHub issue #42 in test-repo: https://github.com/example/test-repo/issues/42
+[2025-11-26T10:12:06Z] INFO: Labels applied: bug, automation
+[2025-11-26T10:12:07Z] INFO: Finished issue pipeline (3 issues created)
+
+Note: This file is a sanitized demo log. In a live run, timestamps and URLs will reflect the actual execution context and repo.
