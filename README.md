@@ -1,6 +1,9 @@
 # Codex / Automation Portfolio
 
-One-line pitch
+This repository contains a production-ready automation spine designed for solo operators and small teams. A single command runs the daily workflow inside a controlled virtual environment, pulls the latest work notes, and generates structured summaries while wiring OpenAI directly into GitHub Issues for automatic task creation and triage. It's built to be both a working tool and a portfolio-grade example of how I approach automation, environment hygiene, and AI integrations.
+
+## One-line pitch
+
 A production-ready automation spine demonstrating a one-command daily runner, AI→GitHub issue flow, and hardened environment setup for investor- and client-ready collaboration.
 
 ## What this project is
