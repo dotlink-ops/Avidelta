@@ -1,41 +1,3 @@
-// app/layout.tsx
-import type { Metadata } from 'next'
-
-const isProd = process.env.NEXT_PUBLIC_ENV === 'production'
-
-export const metadata: Metadata = {
-  title: 'Avidelta',
-  description: 'Avidelta — advisory & ops systems.',
-  robots: { index: isProd, follow: isProd },
-  // optional canonical base for OG/Twitter URLs when public:
-  metadataBase: isProd ? new URL('https://yourdomain.com') : undefined,
-}
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  )
-}
-
-// app/layout.tsx
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Avidelta',
-  description: 'Avidelta — advisory & ops systems.',
-  robots: { index: false, follow: false }, // <-- key line
-}
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  )
-}
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -62,9 +24,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <a className="skip-link" href="#main-content">
+          Skip to main content
+        </a>
         {children}
       </body>
     </html>
