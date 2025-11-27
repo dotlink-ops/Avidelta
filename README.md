@@ -20,6 +20,23 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Codex-powered portfolio assistant
+
+Use the included `codex-assistant.mjs` script to generate a ready-to-paste portfolio/Upwork summary for this repository. The script prompts the Codex API for a repo overview, cleanup ideas, documentation outline, deployment guidance, and a client-facing narrative.
+
+Prerequisites:
+
+- Access to the `@openai/codex-sdk` package (install with `npm install @openai/codex-sdk`).
+- An `OPENAI_API_KEY` environment variable configured for the Codex client.
+
+Usage:
+
+```bash
+npm run codex-assistant
+# or provide additional instructions to append to the default prompt
+npm run codex-assistant -- "Emphasize DevOps tooling"
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

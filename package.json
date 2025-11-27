@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "codex-assistant": "node codex-assistant.mjs"
   },
   "dependencies": {
     "react": "19.2.0",
