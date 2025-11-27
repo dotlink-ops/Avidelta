@@ -3,7 +3,8 @@ import type { ReactNode } from 'react'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 
-const envName = process.env.NEXT_PUBLIC_ENV ?? process.env.NODE_ENV
+const envName =
+  process.env.NEXT_PUBLIC_ENV ?? process.env.VERCEL_ENV ?? process.env.NODE_ENV
 const isProd = envName === 'production'
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 
