@@ -519,8 +519,29 @@ Before deploying:
 - **AUTOMATION_GUIDE.md**: Detailed automation documentation
 - **QUICKSTART.md**: Quick reference for common tasks
 - **DEMO.md**: Step-by-step demo walkthrough
+- **UPWORK.md**: Portfolio messaging and one-liners
+- **PRODUCTION_READY.md**: Production readiness verification
 - **.copilot-instructions.md**: AI assistant usage guide
+- **codex-assistant.mjs**: Repo Copilot configuration for AI assistants
 - **FIXES_SUMMARY.md**: Change log and architecture decisions
+- **project.config**: Explicit configuration reference
+
+### 🤖 AI Assistant Integration
+
+This repository includes **Avidelta Repo Copilot** configuration:
+
+- **`codex-assistant.mjs`**: Full-stack AI assistant configuration
+  - Complete repository architecture knowledge
+  - 6-step systematic debugging workflow
+  - Common issues & solutions reference
+  - Enforces small, tested, incremental changes
+
+- **`.copilot-instructions.md`**: Usage patterns and example queries
+  - How to ask effective debugging questions
+  - Test command expectations
+  - Core development principles
+
+**To use:** Import `codex-assistant.mjs` into your AI assistant (GitHub Copilot, ChatGPT, Claude) for context-aware development with comprehensive repo knowledge.
 
 ---
 

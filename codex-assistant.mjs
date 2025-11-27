@@ -1,3 +1,31 @@
+/**
+ * ============================================================================
+ * AVIDELTA REPO COPILOT ASSISTANT CONFIGURATION
+ * ============================================================================
+ * 
+ * Title: Repo Copilot - Full-Stack AI Assistant for NextJS Automation Portfolio
+ * 
+ * This configuration provides AI assistants (GitHub Copilot, ChatGPT, Claude, etc.)
+ * with comprehensive knowledge of the avidelta.vercel.app repository architecture.
+ * 
+ * Repository: https://github.com/dotlink-ops/nextjs
+ * Live Demo: https://avidelta.vercel.app
+ * 
+ * Usage:
+ * - Import this configuration into AI assistants for context-aware development
+ * - Reference .copilot-instructions.md for usage patterns
+ * - Use REPO_COPILOT_PROMPT for comprehensive repo knowledge
+ * 
+ * Features:
+ * - Complete architecture documentation (Python + Next.js)
+ * - 6-step systematic debugging workflow
+ * - Common issues & solutions reference
+ * - Test command requirements for all changes
+ * - Small, incremental change philosophy
+ * 
+ * ============================================================================
+ */
+
 // codex-assistant.mjs
 // Repo Copilot: Full-stack debugging and development assistant
 
