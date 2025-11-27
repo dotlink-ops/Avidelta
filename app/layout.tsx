@@ -3,17 +3,20 @@ import Script from "next/script";
 import "./globals.css";
 import NavBar from "@/components/nav-bar";
 import Footer from "@/components/footer";
-import { metadataBaseUrl, siteConfig, metadataDefaults } from "@/lib/site";
+import { metadataBaseUrl, siteConfig, metadataDefaults, getSiteUrl } from "@/lib/site";
+
+const siteUrl = getSiteUrl();
+const sharedTitle = `${siteConfig.name} — operations, telemetry, and controls`;
 
 export const metadata: Metadata = {
-  title: `${siteConfig.name} — operations, telemetry, and controls`,
+  title: sharedTitle,
   description: siteConfig.description,
   metadataBase: metadataBaseUrl(),
   keywords: metadataDefaults.keywords,
   openGraph: {
-    title: `${siteConfig.name} — operations, telemetry, and controls`,
+    title: sharedTitle,
     description: siteConfig.description,
-    url: siteConfig.url,
+    url: siteUrl,
     siteName: siteConfig.name,
     images: [
       {
@@ -26,8 +29,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    site: siteConfig.name,
-    title: `${siteConfig.name} — operations, telemetry, and controls`,
+    site: siteConfig.social?.twitterHandle || siteConfig.name,
+    title: sharedTitle,
     description: siteConfig.description,
     images: ["/images/hero-visual.svg"],
   },
@@ -36,7 +39,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: siteConfig.url,
+    canonical: siteUrl,
   },
 };
 

@@ -17,7 +17,8 @@ export const siteConfig = {
   ] as NavLink[],
   social: {
     linkedin: "https://linkedin.com",
-    twitter: "https://twitter.com",
+    twitter: "https://twitter.com/avidelta",
+    twitterHandle: "@avidelta",
     email: "mailto:hello@avidelta.com",
   },
 };
@@ -42,5 +43,13 @@ export function metadataBaseUrl(): URL | undefined {
     return new URL(getSiteUrl());
   } catch {
     return undefined;
+  }
+}
+
+export function getSiteHostname() {
+  try {
+    return new URL(getSiteUrl()).hostname;
+  } catch {
+    return "localhost";
   }
 }
