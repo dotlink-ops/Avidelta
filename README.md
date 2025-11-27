@@ -147,6 +147,8 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
+### Quick Deploy (Manual)
+
 **One-command deployment:**
 
 ```bash
@@ -157,15 +159,57 @@ npm i -g vercel
 vercel --prod
 ```
 
-Or connect your GitHub repo to [Vercel](https://vercel.com/new) for automatic deployments on push.
+### Automated CI/CD (Recommended)
 
-**Pre-deploy checklist:**
+**Setup GitHub → Vercel Integration:**
+
+1. Go to [vercel.com/new](https://vercel.com/new)
+2. Import project: `dotlink-ops/nextjs`
+3. Configure:
+   - **Framework Preset:** Next.js
+   - **Root Directory:** `./` (auto-detected)
+   - **Build Command:** `npm run build` (auto-detected)
+   - **Output Directory:** `.next` (auto-detected)
+4. Click "Deploy"
+
+**Automatic Deployments:**
+- ✅ **Production:** Every push to `main` → auto-deploy to `https://avidelta.vercel.app`
+- ✅ **Preview:** Every PR → unique preview URL (e.g., `nextjs-git-feature-dotlink-ops.vercel.app`)
+- ✅ **Instant verification:** Use health endpoints in PR descriptions
+
+**PR Template with Health Checks:**
+
+```markdown
+## Changes
+- [description]
+
+## Health Checks
+- Preview: https://[pr-preview-url].vercel.app
+- Status: https://[pr-preview-url].vercel.app/api/healthz
+- Daily Summary: https://[pr-preview-url].vercel.app/api/daily-summary
+- Full Status: https://[pr-preview-url].vercel.app/api/status
+
+## Testing
+curl https://[pr-preview-url].vercel.app/api/healthz | jq
+```
+
+**Environment Variables** (if needed):
+- Add any API keys or secrets in Vercel dashboard → Settings → Environment Variables
+- Available in: Production, Preview, Development
+
+### Pre-deploy Checklist
 - ✅ Remove any secrets from code (use environment variables)
 - ✅ Test all API routes locally: `/api/health`, `/api/status`, `/api/daily-summary`, `/api/demo`
 - ✅ Update SEO metadata in `app/layout.tsx` if needed
 - ✅ Verify build: `npm run build`
 
-**Environment variables** (if needed):
-- Add any API keys or secrets in Vercel dashboard → Settings → Environment Variables
+### Verify Deployment
+
+```bash
+# Check production endpoints
+curl https://avidelta.vercel.app/api/healthz | jq
+curl https://avidelta.vercel.app/api/status | jq
+curl https://avidelta.vercel.app/sitemap.xml
+```
 
 Check out [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
