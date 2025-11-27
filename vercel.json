@@ -5,5 +5,5 @@
       "main": true
     }
   },
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':!*.md' ':!SAMPLE_OUTPUTS' ':!scripts' ':!*.sh' ':!.env.example' ':!DailySummaryPanel'"
+  "ignoreCommand": "bash scripts/should-deploy.sh"
 }
