@@ -57,7 +57,7 @@ export function Hero() {
               <p>Faster time to value</p>
             </div>
             <div className="space-y-1">
-              <p className="text-xl font-semibold text-slate-900 dark:text-white">98% </p>
+              <p className="text-xl font-semibold text-slate-900 dark:text-white">98%</p>
               <p>Customer satisfaction</p>
             </div>
           </div>
