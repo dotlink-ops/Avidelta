@@ -109,14 +109,16 @@ class DailyAutomation:
         
         # Check for markdown/text files in notes directory
         if self.notes_source.exists():
-            for file_path in self.notes_source.glob("**/*.{md,txt}"):
-                try:
-                    content = file_path.read_text(encoding="utf-8")
-                    if content.strip():
-                        notes.append(content.strip())
-                        logger.debug(f"  Loaded: {file_path.name}")
-                except Exception as e:
-                    logger.warning(f"  Failed to read {file_path}: {e}")
+            # Glob doesn't support {md,txt} syntax - need to search separately
+            for pattern in ["**/*.md", "**/*.txt"]:
+                for file_path in self.notes_source.glob(pattern):
+                    try:
+                        content = file_path.read_text(encoding="utf-8")
+                        if content.strip():
+                            notes.append(content.strip())
+                            logger.debug(f"  Loaded: {file_path.name}")
+                    except Exception as e:
+                        logger.warning(f"  Failed to read {file_path}: {e}")
         
         # Fallback to demo notes if no files found
         if not notes:
@@ -133,6 +135,10 @@ class DailyAutomation:
     def generate_summary(self, notes: List[str]) -> Dict[str, Any]:
         """Generate AI-powered summary from notes"""
         logger.info("🤖 Generating summary...")
+        
+        if not notes:
+            logger.warning("No notes provided, returning empty summary")
+            return {"highlights": [], "action_items": [], "assessment": "No notes to process"}
         
         if self.demo_mode or not self.openai_client:
             logger.info("  Running in demo mode (stubbed)")
@@ -161,6 +167,7 @@ Format as JSON with keys: highlights, action_items, assessment"""
                 ],
                 temperature=0.7,
                 max_tokens=500,
+                timeout=30.0,
             )
             
             # Parse response
@@ -180,6 +187,7 @@ Format as JSON with keys: highlights, action_items, assessment"""
             
         except Exception as e:
             logger.error(f"OpenAI API error: {e}")
+            logger.info("  Falling back to demo summary")
             return self._generate_demo_summary(notes)
 
     def _generate_demo_summary(self, notes: List[str]) -> Dict[str, Any]:
@@ -203,6 +211,10 @@ Format as JSON with keys: highlights, action_items, assessment"""
         logger.info("📋 Creating GitHub issues...")
         created_issues = []
         
+        if not action_items:
+            logger.info("  No action items to create issues from")
+            return created_issues
+        
         if self.demo_mode or not self.repo:
             logger.info("  Running in demo mode (stubbed)")
             for i, item in enumerate(action_items, 42):
@@ -218,9 +230,13 @@ Format as JSON with keys: highlights, action_items, assessment"""
         
         try:
             for item in action_items:
+                # Skip empty items
+                if not item or not item.strip():
+                    continue
+                    
                 # Create issue
                 issue = self.repo.create_issue(
-                    title=item[:100],  # Limit title length
+                    title=item[:100].strip(),  # Limit title length and trim whitespace
                     body=f"Auto-generated from daily automation runner\n\n**Action Item:**\n{item}\n\n---\n*Created: {datetime.now(timezone.utc).isoformat()}*",
                     labels=["automation", "daily-runner"],
                 )
