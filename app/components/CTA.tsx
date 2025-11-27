@@ -4,7 +4,7 @@ export function CTA() {
       id="cta"
       className="relative overflow-hidden border-y border-slate-100 bg-gradient-to-r from-indigo-600 via-sky-500 to-cyan-400 py-16 text-white dark:border-slate-800"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.18),_transparent_45%)]" aria-hidden />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.18),_transparent_45%)]" aria-hidden="true" />
       <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-8 px-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-4 lg:max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-[0.25em] text-white/80">Get ahead</p>
