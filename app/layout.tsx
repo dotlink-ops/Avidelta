@@ -50,11 +50,25 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <div className="flex-1">{children}</div>
-        <footer className="border-t border-zinc-800 bg-black text-zinc-400 py-6 px-6 md:px-12 lg:px-24">
-          <p className="text-xs md:text-sm leading-relaxed max-w-5xl mx-auto">
-            Built with a Python daily runner (<code className="text-zinc-300">daily_v2.py</code>), OpenAI-powered summarization, GitHub issue automation, and a Next.js frontend deployed on Vercel at{" "}
-            <span className="text-zinc-200 font-medium">ariadnenexus.com</span>.
-          </p>
+        <footer className="border-t border-zinc-800 bg-black text-zinc-400 py-8 px-6 md:px-12 lg:px-24">
+          <div className="max-w-5xl mx-auto">
+            <section className="mb-6 text-sm space-y-2">
+              <h2 className="text-base font-semibold text-zinc-200">
+                Automation stack behind this site
+              </h2>
+              <p className="leading-relaxed">
+                Under the hood: a daily Python runner (<code className="text-zinc-300 bg-zinc-900 px-1 py-0.5 rounded">daily_v2.py</code>) ingests notes,
+                calls the OpenAI API to generate structured summaries, and can turn action items
+                into GitHub issues. This Next.js frontend, deployed on Vercel at
+                <span className="font-mono text-zinc-200"> ariadnenexus.com</span>, is the presentation layer
+                for that automation.
+              </p>
+            </section>
+            <p className="text-xs md:text-sm leading-relaxed pt-4 border-t border-zinc-900">
+              Built with a Python daily runner (<code className="text-zinc-300">daily_v2.py</code>), OpenAI-powered summarization, GitHub issue automation, and a Next.js frontend deployed on Vercel at{" "}
+              <span className="text-zinc-200 font-medium">ariadnenexus.com</span>.
+            </p>
+          </div>
         </footer>
       </body>
     </html>
