@@ -81,7 +81,7 @@ export default function ServicesPage() {
                 <li>• 1 core workflow automated (e.g., lead → CRM → email → Slack/Teams)</li>
                 <li>• Up to 3 tool integrations (e.g., Shopify, HubSpot, Airtable, Gmail, Slack, etc.)</li>
                 <li>• Basic error handling (alerts when something breaks)</li>
-                <li>• 1–page visual workflow map (PDF)</li>
+                <li>• 1-page visual workflow map (PDF)</li>
                 <li>• 1 Loom walkthrough video (5–10 minutes)</li>
                 <li>• 7 days of post-launch bug fixes (minor tweaks only)</li>
               </ul>
@@ -93,7 +93,7 @@ export default function ServicesPage() {
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-2xl font-semibold">Ops Control Tower</h3>
-                <p className="text-zinc-400 mt-1">Best for e-commerce or service businesses that want front-to-back visibility and fewer manual tasks across sales + ops.</p>
+                <p className="text-zinc-400 mt-1">Best for e-commerce or service businesses that want front-to-back visibility and fewer manual tasks across sales and ops.</p>
               </div>
               <div className="text-right">
                 <div className="text-3xl font-bold text-blue-400">$3,500</div>
@@ -120,7 +120,7 @@ export default function ServicesPage() {
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-2xl font-semibold">AI Co-Pilot Build</h3>
-                <p className="text-zinc-400 mt-1">Best for teams who want an AI-enhanced workflow (summarization, routing, drafting, or decision support) on top of existing tools.</p>
+                <p className="text-zinc-400 mt-1">Best for teams who want an AI-enhanced workflow (summarization, routing, drafting, or decision support) on top of their existing tools.</p>
               </div>
               <div className="text-right">
                 <div className="text-3xl font-bold text-blue-400">$6,500+</div>
