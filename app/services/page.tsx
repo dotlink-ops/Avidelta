@@ -156,8 +156,7 @@ export default function ServicesPage() {
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
               <div>
                 <h3 className="text-xl font-semibold">Avidelta Care</h3>
-                <div className="text-2xl font-bold text-blue-400 mt-2">$1,500</div>
-                <div className="text-sm text-zinc-400">/month</div>
+                <div className="text-2xl font-bold text-blue-400 mt-2">$1,500/month</div>
               </div>
 
               <div>
@@ -171,7 +170,7 @@ export default function ServicesPage() {
               </div>
 
               <p className="text-xs text-zinc-400 italic pt-2 border-t border-zinc-800">
-                Best for: Smaller teams with a few critical automations who want a safety net and occasional tweaks.
+                Best for smaller teams with a few critical automations who want a safety net and occasional tweaks.
               </p>
             </div>
 
@@ -181,9 +180,8 @@ export default function ServicesPage() {
                 <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">POPULAR</span>
               </div>
               <div>
-                <h3 className="text-xl font-semibold">Avidelta Growth</h3>
-                <div className="text-2xl font-bold text-blue-400 mt-2">$3,250</div>
-                <div className="text-sm text-zinc-400">/month</div>
+                <h3 className="text-xl font-semibold">Avidelta Growth · <span className="text-zinc-400 font-normal italic">Most Popular</span></h3>
+                <div className="text-2xl font-bold text-blue-400 mt-2">$3,250/month</div>
               </div>
 
               <div>
@@ -198,7 +196,7 @@ export default function ServicesPage() {
               </div>
 
               <p className="text-xs text-zinc-400 italic pt-2 border-t border-zinc-800">
-                Best for: Growing e-comm / service businesses where automation is now a core part of the operating system.
+                Best for growing e-comm / service businesses where automation is now a core part of the operating system.
               </p>
             </div>
 
@@ -206,8 +204,7 @@ export default function ServicesPage() {
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
               <div>
                 <h3 className="text-xl font-semibold">Avidelta Partner</h3>
-                <div className="text-2xl font-bold text-blue-400 mt-2">$6,500+</div>
-                <div className="text-sm text-zinc-400">/month</div>
+                <div className="text-2xl font-bold text-blue-400 mt-2">$6,500+/month</div>
               </div>
 
               <div>
@@ -222,7 +219,7 @@ export default function ServicesPage() {
               </div>
 
               <p className="text-xs text-zinc-400 italic pt-2 border-t border-zinc-800">
-                Best for: Teams treating Avidelta as a fractional Head of Automation + build team.
+                Best for teams treating Avidelta as a fractional Head of Automation + build team.
               </p>
             </div>
           </div>
