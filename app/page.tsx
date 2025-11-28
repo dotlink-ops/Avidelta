@@ -6,25 +6,28 @@ export default function HomePage() {
       <div className="max-w-5xl w-full space-y-12 p-8">
         {/* HERO */}
         <header className="space-y-4">
-          <h1 className="text-4xl font-semibold">Automation, Systems & AI for Lean Teams</h1>
+          <h1 className="text-4xl font-semibold">Automation that actually ships, not just lives in a doc.</h1>
           <p className="text-lg text-zinc-300 max-w-3xl">
-            Automation-first workflows: a daily Python runner, AI-generated summaries, and a live Next.js frontend at ariadnenexus.com.
-          </p>
-          <p className="text-zinc-400 max-w-2xl">
-            I design and ship one-command automations, AI-powered workflows, and
-            clean developer environments that turn scattered tools into a repeatable,
-            documented system.
+            Turn scattered tools and tribal knowledge into reliable systems. I help teams ship real-world automations — the kind that reduce manual work, clean up handoffs, and free your ops to breathe.
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <a
               href="/services"
               className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
             >
-              Services & Pricing
+              View automation services
+            </a>
+            <a
+              href="https://cal.com/avidelta/15min"
+              target="_blank"
+              rel="noreferrer"
+              className="px-4 py-2 bg-transparent border border-zinc-700 rounded-lg text-zinc-200 hover:bg-zinc-800 transition"
+            >
+              Book a 15-min fit call
             </a>
             <a
               href="/automation"
-              className="px-4 py-2 bg-zinc-50 text-black rounded-lg font-medium hover:bg-zinc-200 transition"
+              className="px-4 py-2 bg-transparent border border-zinc-700 rounded-lg text-zinc-200 hover:bg-zinc-800 transition"
             >
               View Automation Details
             </a>
@@ -35,14 +38,6 @@ export default function HomePage() {
               className="px-4 py-2 bg-transparent border border-zinc-700 rounded-lg text-zinc-200 hover:bg-zinc-800 transition"
             >
               View API Demo
-            </a>
-            <a
-              href="https://cal.com/avidelta/15min"
-              target="_blank"
-              rel="noreferrer"
-              className="px-4 py-2 bg-transparent border border-zinc-700 rounded-lg text-zinc-200 hover:bg-zinc-800 transition"
-            >
-              Book a 15-min Fit Call
             </a>
             <a
               href="#demo"
