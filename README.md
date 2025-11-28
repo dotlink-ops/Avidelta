@@ -4,7 +4,14 @@
 
 This repo combines a **Python automation engine** with a **Next.js portfolio frontend** and is structured to be friendly for both humans and AI coding assistants.
 
-**Live Demo:** https://ariadnenexus.com
+**Live Demo:** https://www.ariadnenexus.com
+
+### Live Site
+
+The frontend is deployed to Vercel at **ariadnenexus.com**, with automatic SSL, apex → www redirects, and CDN caching.
+
+- **Production URL:** https://www.ariadnenexus.com
+- **Apex domain:** https://ariadnenexus.com (redirects to www with SSL)
 
 ---
 

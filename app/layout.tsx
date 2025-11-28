@@ -14,22 +14,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Avidelta — Automation, Systems & AI",
-  description: "One-command automations, AI workflows, and developer environments.",
+  metadataBase: new URL("https://www.ariadnenexus.com"),
+  title: "Ariadne Nexus",
+  description: "Ariadne Nexus: automation-first workflows, daily runners, and AI-powered developer tooling.",
   keywords: ["automation", "AI workflows", "GitHub integration", "OpenAI", "DevOps", "systems"],
-  authors: [{ name: "Avidelta" }],
+  authors: [{ name: "Ariadne Nexus" }],
   openGraph: {
-    title: "Avidelta",
-    description: "One-command automations, AI workflows, and developer environments.",
-    url: "https://ariadnenexus.com",
-    siteName: "Avidelta",
+    title: "Ariadne Nexus",
+    description: "Ariadne Nexus: automation-first workflows, daily runners, and AI-powered developer tooling.",
+    url: "https://www.ariadnenexus.com",
+    siteName: "Ariadne Nexus",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Avidelta — Automation, Systems & AI",
-    description: "One-command automations, AI workflows, and developer environments.",
+    title: "Ariadne Nexus",
+    description: "Ariadne Nexus: automation-first workflows, daily runners, and AI-powered developer tooling.",
   },
   robots: { index: true, follow: true },
 };
