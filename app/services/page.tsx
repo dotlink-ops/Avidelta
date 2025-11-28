@@ -9,8 +9,11 @@ export default function ServicesPage() {
           <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
             Automation Services & Pricing
           </h1>
+          <p className="text-xl text-zinc-300 max-w-3xl">
+            From &quot;everything lives in someone&apos;s head&quot; to &quot;it just happens.&quot;
+          </p>
           <p className="text-lg text-zinc-400 max-w-3xl">
-            From hourly consulting to fixed-scope sprints and ongoing retainers — designed for teams who want automation that actually works.
+            These offers are for teams who want fewer manual tasks, cleaner handoffs, and automations that actually ship — not just live in a whiteboard.
           </p>
         </header>
 
@@ -23,7 +26,7 @@ export default function ServicesPage() {
               <span className="text-xl text-zinc-400">/hour</span>
             </div>
             <p className="text-zinc-400">
-              Strategy, build, and troubleshooting for automation systems
+              Strategy, build, and troubleshooting for automation systems.
             </p>
           </div>
 
@@ -43,15 +46,8 @@ export default function ServicesPage() {
                 <li>• Design and implementation of workflows (Zapier, Make, n8n, custom scripts, OpenAI, etc.)</li>
                 <li>• Systems mapping and architecture (how tools and data should connect)</li>
                 <li>• Debugging and optimization of existing automations</li>
-                <li>• Light documentation updates as we go (inline notes + quick Looms)</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Optional add-ons</h3>
-              <ul className="space-y-1 text-zinc-300">
+                <li>• Light documentation as we go (inline notes + quick Looms)</li>
                 <li>• Rush / same-day start: +30% (subject to availability)</li>
-                <li>• Advisory-only / strategy calls: $195/hour (no hands-on build, pure architecture + roadmap)</li>
               </ul>
             </div>
           </div>
