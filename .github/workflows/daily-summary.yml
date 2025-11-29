@@ -104,12 +104,22 @@ jobs:
           git push origin main
           echo "✓ Changes pushed to main - Vercel will auto-deploy"
 
-      - name: Notify Slack on failure
-        if: failure()
+      - name: Notify Slack
+        if: always()
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run: |
-          if [ -n "$SLACK_WEBHOOK" ]; then
+          if [ -z "$SLACK_WEBHOOK" ]; then
+            echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+            exit 0
+          fi
+
+          if [ "${{ job.status }}" = "success" ]; then
+            curl -X POST -H 'Content-type: application/json' \
+              --data "{\"text\": \"✅ GitHub Action completed: $GITHUB_WORKFLOW on $GITHUB_REF (@ $GITHUB_SHA)\"}" \
+              "$SLACK_WEBHOOK"
+            echo "✓ Success notification sent to Slack"
+          else
             curl -X POST "$SLACK_WEBHOOK" \
               -H 'Content-Type: application/json' \
               -d "{
@@ -124,7 +134,5 @@ jobs:
                   }
                 ]
               }"
-            echo "✓ Slack notification sent"
-          else
-            echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+            echo "✓ Failure notification sent to Slack"
           fi
