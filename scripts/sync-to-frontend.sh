@@ -29,7 +29,7 @@ echo "✓ daily_summary.json is in the correct location"
 # Update sample outputs for demo purposes
 if [ -d "$SAMPLE_OUTPUT_DIR" ]; then
     echo "📋 Updating sample outputs..."
-    
+
     # Generate fresh sample summary from latest run
     if [ -f "$DATA_SOURCE" ]; then
         # Use Python to format the JSON data nicely
@@ -65,7 +65,7 @@ print(output)
 " > "$SAMPLE_OUTPUT_DIR/daily_runner_summary.txt"
         echo "  ✓ Updated daily_runner_summary.txt"
     fi
-    
+
     # Generate sample issue pipeline log
     cat > "$SAMPLE_OUTPUT_DIR/issue_pipeline_log.txt" << EOF
 [$(date -u +%Y-%m-%dT%H:%M:%SZ)] INFO: Starting issue pipeline

@@ -59,7 +59,7 @@
    ```bash
    # Repository-level secret
    gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --body "$NEW_KEY"
-   
+
    # Environment-specific secrets (staging/production)
    # Via UI: Settings → Environments → [env] → Update secret
    ```

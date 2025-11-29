@@ -249,7 +249,7 @@ if (!key) {
 // For Next.js API routes:
 export async function GET(request: Request) {
   const apiKey = process.env.OPENAI_API_KEY;
-  
+
   if (!apiKey) {
     console.error("OPENAI_API_KEY not configured");
     return Response.json(
@@ -257,7 +257,7 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
-  
+
   // Use apiKey safely...
 }
 ```
@@ -269,7 +269,7 @@ export async function GET(request: Request) {
 export function validateEnv() {
   const required = ['OPENAI_API_KEY', 'GITHUB_TOKEN'];
   const missing = required.filter(key => !process.env[key]);
-  
+
   if (missing.length > 0) {
     throw new Error(
       `Missing required environment variables: ${missing.join(', ')}`
@@ -306,12 +306,12 @@ import sys
 def validate_env(required_vars: list[str]) -> None:
     """
     Validate required environment variables are present.
-    
+
     Raises:
         RuntimeError: If any required variables are missing
     """
     missing = [var for var in required_vars if not os.getenv(var)]
-    
+
     if missing:
         print(f"❌ Missing environment variables: {', '.join(missing)}", file=sys.stderr)
         print("\nSet them in .env.local or export them:", file=sys.stderr)

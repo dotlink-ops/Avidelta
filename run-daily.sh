@@ -28,13 +28,13 @@ if [ -f "$PROJECT_ROOT/scripts/daily_v2.py" ]; then
     echo "Running daily_v2.py..."
     python3 "$PROJECT_ROOT/scripts/daily_v2.py" "$@"
     EXIT_CODE=$?
-    
+
     # Sync outputs to frontend if successful
     if [ $EXIT_CODE -eq 0 ] && [ -f "$PROJECT_ROOT/scripts/sync-to-frontend.sh" ]; then
         echo ""
         bash "$PROJECT_ROOT/scripts/sync-to-frontend.sh"
     fi
-    
+
     exit $EXIT_CODE
 else
     echo "Running daily-runner.py (demo)..."

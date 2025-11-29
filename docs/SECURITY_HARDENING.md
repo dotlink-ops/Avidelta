@@ -195,7 +195,7 @@ Branch name pattern: main
 
 ☑ Require status checks to pass before merging
   ☑ Require branches to be up to date before merging
-  
+
   Required checks:
     ☑ check-secrets (repository)
     ☑ check-secrets (staging)
@@ -298,7 +298,7 @@ Configure push notifications for workflow failures.
    ```bash
    # Via GitHub UI:
    Organization → Audit log → Filter: "action:workflows.*"
-   
+
    # Via API:
    gh api /orgs/dotlink-ops/audit-log \
      --jq '.[] | select(.action | startswith("workflows"))'

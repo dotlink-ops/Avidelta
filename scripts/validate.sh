@@ -55,7 +55,7 @@ echo ""
 echo "2️⃣  Python Dependencies"
 if [ -f "$PROJECT_ROOT/scripts/requirements.txt" ]; then
     test_pass "requirements.txt exists"
-    
+
     # Try to check if deps are installed
     if source "$PROJECT_ROOT/venv/bin/activate" 2>/dev/null; then
         if python3 -c "import openai, github, dotenv" 2>/dev/null; then
@@ -80,14 +80,14 @@ fi
 
 if [ -f "$PROJECT_ROOT/.env.local" ]; then
     test_pass ".env.local exists"
-    
+
     # Check for placeholder values
     if grep -q "your-openai-api-key-here" "$PROJECT_ROOT/.env.local" 2>/dev/null; then
         test_warn "OPENAI_API_KEY not configured (using placeholder)"
     else
         test_pass "OPENAI_API_KEY configured"
     fi
-    
+
     if grep -q "your-github-token-here" "$PROJECT_ROOT/.env.local" 2>/dev/null; then
         test_warn "GITHUB_TOKEN not configured (using placeholder)"
     else
@@ -114,7 +114,7 @@ echo "5️⃣  Automation Scripts"
 for script in "scripts/daily-runner.py" "scripts/daily_v2.py" "scripts/setup-automation.sh" "scripts/sync-to-frontend.sh" "run-daily.sh"; do
     if [ -f "$PROJECT_ROOT/$script" ]; then
         test_pass "Script exists: $script"
-        
+
         # Check if executable
         if [ -x "$PROJECT_ROOT/$script" ] || [[ "$script" == *.py ]]; then
             test_pass "  ├─ Executable/runnable"
@@ -137,7 +137,7 @@ fi
 
 if [ -f "$PROJECT_ROOT/output/daily_summary.json" ]; then
     test_pass "daily_summary.json generated"
-    
+
     # Validate JSON
     if python3 -c "import json; json.load(open('$PROJECT_ROOT/output/daily_summary.json'))" 2>/dev/null; then
         test_pass "  └─ Valid JSON format"

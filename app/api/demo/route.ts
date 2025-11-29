@@ -16,7 +16,7 @@ export async function GET() {
       await fs.access(base);
     } catch {
       return NextResponse.json(
-        { 
+        {
           error: "Sample outputs not found",
           message: "SAMPLE_OUTPUTS directory is missing",
           summary: "",
@@ -32,15 +32,15 @@ export async function GET() {
     ]);
 
     return NextResponse.json(
-      { 
-        summary, 
+      {
+        summary,
         log,
         _metadata: {
           fetched_at: new Date().toISOString(),
           type: "demo",
         }
       },
-      { 
+      {
         status: 200,
         headers: {
           "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
@@ -50,7 +50,7 @@ export async function GET() {
   } catch (err) {
     console.error("Error reading sample outputs:", err);
     return NextResponse.json(
-      { 
+      {
         error: "Unable to read sample outputs",
         details: err instanceof Error ? err.message : String(err),
         summary: "",

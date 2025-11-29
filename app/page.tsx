@@ -175,7 +175,7 @@ export default function HomePage() {
         {/* RESOURCES */}
         <section className="space-y-6">
           <h2 className="text-2xl font-semibold text-zinc-100">Resources</h2>
-          
+
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
             <h3 className="text-xl font-semibold text-zinc-100">Free Automation Brand Template (Figma)</h3>
             <p className="text-zinc-300">

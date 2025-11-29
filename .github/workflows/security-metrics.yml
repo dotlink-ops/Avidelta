@@ -1,0 +1,74 @@
+name: Security Metrics Aggregator
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 1 * *"  # 1st of every month at 00:00 UTC
+
+permissions: {}
+
+jobs:
+  update-metrics:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Setup Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with:
+          python-version: '3.11'
+
+      - name: Generate dashboard summary
+        run: python scripts/update_security_dashboard.py
+
+      - name: Commit updated dashboard
+        run: |
+          git config --global user.name "Avidelta Security Bot"
+          git config --global user.email "security-bot@avidelta.io"
+          git add docs/security-audit-template.md
+
+          # Only commit if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to dashboard metrics"
+          else
+            git commit -m "chore: Auto-update security compliance dashboard [skip ci]"
+            git push
+          fi
+
+      - name: Generate job summary
+        if: always()
+        run: |
+          echo "## 📊 Security Metrics Update" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $(date -u '+%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f "/tmp/dashboard_metrics.txt" ]; then
+            cat /tmp/dashboard_metrics.txt >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ Metrics aggregation completed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Notify on failure
+        if: failure() && vars.SLACK_WEBHOOK != ''
+        run: |
+          curl -X POST "${{ secrets.SLACK_WEBHOOK }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "text": "🚨 Security Metrics Aggregator Failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Security Metrics Aggregator* failed\n*Repository:* ${{ github.repository }}\n*Workflow:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>"
+                  }
+                }
+              ]
+            }'

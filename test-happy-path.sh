@@ -68,14 +68,14 @@ echo ""
 
 if timeout 30 python3 scripts/daily_v2.py --demo > /tmp/automation_output.log 2>&1; then
     pass "Automation completed successfully"
-    
+
     # Check for expected output
     if [ -f "output/daily_summary.json" ]; then
         pass "Output file created: output/daily_summary.json"
     else
         fail "Output file not created"
     fi
-    
+
     # Verify JSON is valid
     if command -v jq &> /dev/null; then
         if jq empty output/daily_summary.json 2>/dev/null; then
@@ -86,7 +86,7 @@ if timeout 30 python3 scripts/daily_v2.py --demo > /tmp/automation_output.log 2>
     else
         warn "jq not installed, skipping JSON validation"
     fi
-    
+
     # Check for audit log
     AUDIT_COUNT=$(ls -1 output/audit_*.json 2>/dev/null | wc -l)
     if [ "$AUDIT_COUNT" -gt 0 ]; then
@@ -151,7 +151,7 @@ echo ""
 
 if timeout 120 npm run build > /tmp/nextjs_build.log 2>&1; then
     pass "Next.js build succeeded"
-    
+
     # Check for build artifacts
     if [ -d ".next" ]; then
         pass "Build directory created: .next/"
@@ -235,14 +235,14 @@ echo ""
 echo "📋 Test 10: Git Configuration"
 if [ -f ".gitignore" ]; then
     pass ".gitignore exists"
-    
+
     # Check critical entries
     if grep -q "\.env\.local" .gitignore; then
         pass ".env.local is gitignored"
     else
         fail ".env.local not in .gitignore"
     fi
-    
+
     if grep -q "venv/" .gitignore; then
         pass "venv/ is gitignored"
     else

@@ -66,4 +66,3 @@ This project showcases end-to-end automation design: identifying bottleneck work
 | GitHub repo description | One-liner | 1 sentence |
 | Upwork portfolio item | Paragraph + 5 bullets | 3–6 sentences + list |
 | Next.js site "Selected Automations" | Case Study (What/Why/Capabilities/Demonstrates) | 2–3 paragraphs + bullets |
-

@@ -34,10 +34,10 @@ export async function GET() {
     // Fall back to output/ for local development
     const publicPath = path.join(process.cwd(), "public", "data", "daily_summary.json");
     const outputPath = path.join(process.cwd(), "output", "daily_summary.json");
-    
+
     let filePath = publicPath;
     let dataSource = "production";
-    
+
     // Check if public/data version exists
     try {
       await fs.access(publicPath);
@@ -46,13 +46,13 @@ export async function GET() {
       filePath = outputPath;
       dataSource = "local";
     }
-    
+
     // Check if file exists
     try {
       await fs.access(filePath);
     } catch {
       return NextResponse.json(
-        { 
+        {
           error: "Daily summary not found",
           message: "Run the automation script to generate data: python3 scripts/daily_v2.py",
           status: "not_found"
@@ -60,15 +60,15 @@ export async function GET() {
         { status: 404 }
       );
     }
-    
+
     // Read and parse file
     const fileContent = await fs.readFile(filePath, "utf8");
     const data: DailySummary = JSON.parse(fileContent);
-    
+
     // Validate data structure
     if (!data.date || !data.summary_bullets || !data.action_items) {
       return NextResponse.json(
-        { 
+        {
           error: "Invalid data format",
           message: "Daily summary file is corrupted or incomplete",
           status: "invalid_data"
@@ -76,7 +76,7 @@ export async function GET() {
         { status: 500 }
       );
     }
-    
+
     // Add response metadata
     const response = {
       ...data,
@@ -86,18 +86,18 @@ export async function GET() {
         data_source: dataSource,
       }
     };
-    
+
     return NextResponse.json(response, {
       headers: {
         "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
         "X-Content-Type-Options": "nosniff",
       }
     });
-    
+
   } catch (err) {
     console.error("Error reading daily_summary.json:", err);
     return NextResponse.json(
-      { 
+      {
         error: "Failed to load daily summary",
         message: err instanceof Error ? err.message : "Unknown error",
         status: "error"

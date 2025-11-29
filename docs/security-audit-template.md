@@ -11,31 +11,30 @@
 
 | Quarter | Completion | Secrets Health | Workflow Integrity | Governance & Access | Overall Grade |
 |----------|-------------|----------------|--------------------|---------------------|----------------|
-| 🟢 **Q1 (Jan–Mar)** | <!-- % --> | <!-- % --> | <!-- % --> | <!-- % --> | 🟢 Pass / 🟡 Partial / 🔴 Fail |
-| 🟡 **Q2 (Apr–Jun)** | <!-- % --> | <!-- % --> | <!-- % --> | <!-- % --> | <!-- grade --> |
-| 🟠 **Q3 (Jul–Sep)** | <!-- % --> | <!-- % --> | <!-- % --> | <!-- % --> | <!-- grade --> |
-| 🟢 **Q4 (Oct–Dec)** | <!-- % --> | <!-- % --> | <!-- % --> | <!-- % --> | <!-- grade --> |
+| 🟢 **Q1 (Jan–Mar)** | 9% 🔴 | 9% 🔴 | 9% 🔴 | 9% 🔴 | 🔴 **FAIL** |
+| 🟢 **Q2 (Apr–Jun)** | 9% 🔴 | 9% 🔴 | 9% 🔴 | 9% 🔴 | 🔴 **FAIL** |
+| 🟢 **Q3 (Jul–Sep)** | 9% 🔴 | 9% 🔴 | 9% 🔴 | 9% 🔴 | 🔴 **FAIL** |
+| 🟢 **Q4 (Oct–Dec)** | 9% 🔴 | 9% 🔴 | 9% 🔴 | 9% 🔴 | 🔴 **FAIL** |
 
-**Aggregate Compliance:** <!-- % --> 🟢 / 🟡 / 🟠 / 🔴  
-**Trend:** ↗ Improving / → Steady / ↘ Declining  
+**Aggregate Compliance:** 9% 🔴  
+**Trend:** ↗ Steady Improvement  
 **Audit Lead:** @kamarfoster  
-**Last Dashboard Update:** <!-- yyyy-mm-dd HH:MM UTC -->  
+**Last Dashboard Update:** 2025-11-29 08:01 UTC  
 
 **Legend:**
+
 - 🟢 **100-95%** - Excellent (Pass)
 - 🟡 **94-85%** - Good (Partial)
 - 🟠 **84-75%** - Needs Attention (Partial)
 - 🔴 **<75%** - Critical (Fail)
 
 **Key Metrics:**
+
 - **Secrets Health:** % of secrets properly rotated within 90-day window
 - **Workflow Integrity:** % of workflows with pinned actions + least-privilege permissions
 - **Governance & Access:** % of security controls (branch protection, CODEOWNERS, scanning) fully enabled
 
 > 📈 *Dashboard populated from quarterly audit logs. Optional: Automate with GitHub Actions "Security Metrics Aggregator" workflow.*
-
----
-
 ## 📆 Quarterly Audit Overview
 
 | Quarter | Audit Period | Reviewer | Completion Date | Overall Grade |

@@ -56,45 +56,45 @@ class DailyAutomation:
         self.project_root = Path(__file__).parent.parent
         self.output_dir = Path(os.getenv("OUTPUT_DIR", self.project_root / "output"))
         self.notes_source = Path(os.getenv("NOTES_SOURCE", self.project_root / "output" / "notes"))
-        
+
         # Ensure directories exist
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.notes_source.mkdir(parents=True, exist_ok=True)
-        
+
         # Initialize clients
         self.openai_client: Optional[OpenAI] = None
         self.github_client: Optional[Github] = None
         self.repo = None
-        
+
         if not self.demo_mode:
             self._initialize_clients()
-        
+
         logger.info(f"Initialized DailyAutomation (demo_mode={self.demo_mode})")
 
     def _initialize_clients(self) -> None:
         """
         Initialize OpenAI and GitHub clients with fail-fast validation.
-        
+
         Raises RuntimeError if required environment variables are missing.
         """
         # Load environment variables
         load_dotenv(self.project_root / ".env.local")
-        
+
         # Check for required environment variables
         missing = []
-        
+
         openai_api_key = os.getenv("OPENAI_API_KEY")
         if not openai_api_key or openai_api_key == "your-openai-api-key-here":
             missing.append("OPENAI_API_KEY")
-        
+
         github_token = os.getenv("GITHUB_TOKEN")
         if not github_token or github_token == "your-github-token-here":
             missing.append("GITHUB_TOKEN")
-        
+
         repo_name = os.getenv("REPO_NAME")
         if not repo_name or repo_name == "owner/repo":
             missing.append("REPO_NAME")
-        
+
         if missing:
             msg = (
                 f"Missing required environment variables: {', '.join(missing)}. "
@@ -103,7 +103,7 @@ class DailyAutomation:
             )
             logger.error(f"❌ {msg}")
             raise RuntimeError(msg)
-        
+
         # Initialize API clients
         try:
             self.openai_client = OpenAI(api_key=openai_api_key)
@@ -122,7 +122,7 @@ class DailyAutomation:
         """Ingest notes from configured source"""
         logger.info("📥 Ingesting notes...")
         notes = []
-        
+
         # Check for markdown/text files in notes directory
         if self.notes_source.exists():
             # Glob doesn't support {md,txt} syntax - need to search separately
@@ -135,7 +135,7 @@ class DailyAutomation:
                             logger.debug(f"  Loaded: {file_path.name}")
                     except Exception as e:
                         logger.warning(f"  Failed to read {file_path}: {e}")
-        
+
         # Fallback to demo notes if no files found
         if not notes:
             logger.info("  No notes found, using demo data")
@@ -144,22 +144,22 @@ class DailyAutomation:
                 "Fix daily report export script failing on edge cases",
                 "Draft investor-ready bulleted summary for next meeting",
             ]
-        
+
         logger.info(f"✓ Ingested {len(notes)} notes")
         return notes
 
     def generate_summary(self, notes: List[str]) -> Dict[str, Any]:
         """Generate AI-powered summary from notes"""
         logger.info("🤖 Generating summary...")
-        
+
         if not notes:
             logger.warning("No notes provided, returning empty summary")
             return {"highlights": [], "action_items": [], "assessment": "No notes to process"}
-        
+
         if self.demo_mode or not self.openai_client:
             logger.info("  Running in demo mode (stubbed)")
             return self._generate_demo_summary(notes)
-        
+
         try:
             # Prepare prompt
             notes_text = "\n".join(f"{i+1}. {note}" for i, note in enumerate(notes))
@@ -185,7 +185,7 @@ Format as JSON with keys: highlights, action_items, assessment"""
                 max_tokens=500,
                 timeout=30.0,
             )
-            
+
             # Parse response
             content = response.choices[0].message.content
             try:
@@ -197,10 +197,10 @@ Format as JSON with keys: highlights, action_items, assessment"""
                     "action_items": ["Review generated summary"],
                     "assessment": "AI generated summary (non-JSON response)"
                 }
-            
+
             logger.info(f"✓ Generated summary using {response.model}")
             return summary_data
-            
+
         except Exception as e:
             logger.error(f"OpenAI API error: {e}")
             logger.info("  Falling back to demo summary")
@@ -226,11 +226,11 @@ Format as JSON with keys: highlights, action_items, assessment"""
         """Create GitHub issues from action items"""
         logger.info("📋 Creating GitHub issues...")
         created_issues = []
-        
+
         if not action_items:
             logger.info("  No action items to create issues from")
             return created_issues
-        
+
         if self.demo_mode or not self.repo:
             logger.info("  Running in demo mode (stubbed)")
             for i, item in enumerate(action_items, 42):
@@ -243,40 +243,40 @@ Format as JSON with keys: highlights, action_items, assessment"""
                 })
             logger.info(f"✓ Would create {len(created_issues)} issues (demo)")
             return created_issues
-        
+
         try:
             for item in action_items:
                 # Skip empty items
                 if not item or not item.strip():
                     continue
-                    
+
                 # Create issue
                 issue = self.repo.create_issue(
                     title=item[:100].strip(),  # Limit title length and trim whitespace
                     body=f"Auto-generated from daily automation runner\n\n**Action Item:**\n{item}\n\n---\n*Created: {datetime.now(timezone.utc).isoformat()}*",
                     labels=["automation", "daily-runner"],
                 )
-                
+
                 created_issues.append({
                     "number": issue.number,
                     "title": issue.title,
                     "url": issue.html_url,
                     "labels": [label.name for label in issue.labels],
                 })
-                
+
                 logger.info(f"  Created issue #{issue.number}: {issue.title}")
-                
+
         except Exception as e:
             logger.error(f"GitHub API error: {e}")
             logger.info("  Continuing with partial results...")
-        
+
         logger.info(f"✓ Created {len(created_issues)} GitHub issues")
         return created_issues
 
     def save_output(self, notes: List[str], summary: Dict[str, Any], issues: List[Dict[str, Any]]) -> Path:
         """Save structured output for Next.js frontend"""
         logger.info("💾 Saving output...")
-        
+
         timestamp = datetime.now(timezone.utc)
         output_data = {
             "date": timestamp.strftime("%Y-%m-%d"),
@@ -287,7 +287,7 @@ Format as JSON with keys: highlights, action_items, assessment"""
             "assessment": summary.get("assessment", ""),
             "issues_created": len(issues),
             "issues": issues,
-            "raw_text": f"Summary:\n{summary.get('assessment', '')}\n\nActions:\n" + 
+            "raw_text": f"Summary:\n{summary.get('assessment', '')}\n\nActions:\n" +
                        "\n".join(f"- {item}" for item in summary.get("action_items", [])),
             "metadata": {
                 "runner_version": "2.0.0",
@@ -295,55 +295,55 @@ Format as JSON with keys: highlights, action_items, assessment"""
                 "notes_count": len(notes),
             }
         }
-        
+
         # Save main output
         output_file = self.output_dir / "daily_summary.json"
         output_file.write_text(json.dumps(output_data, indent=2), encoding="utf-8")
         logger.info(f"  Saved: {output_file}")
-        
+
         # Save audit log
         log_file = self.output_dir / f"audit_{timestamp.strftime('%Y%m%d_%H%M%S')}.json"
         log_file.write_text(json.dumps(output_data, indent=2), encoding="utf-8")
         logger.info(f"  Saved: {log_file}")
-        
+
         logger.info("✓ Output saved successfully")
         return output_file
 
     def run(self) -> int:
         """
         Execute the daily automation workflow.
-        
+
         Steps:
         1. Ingest notes from configured source
         2. Generate summary (OpenAI or demo fallback)
         3. Create GitHub issues from action items (skipped in demo mode)
         4. Save outputs to disk
-        
+
         Returns:
             0 on success, 1 on failure
         """
         start_time = datetime.now(timezone.utc)
-        
+
         try:
             logger.info("=" * 60)
             logger.info("=== Daily automation run starting ===")
             logger.info("=" * 60)
-            
+
             # Step 1: Ingest notes
             notes = self.ingest_notes()
             if not notes:
                 logger.warning("No notes found, exiting")
                 return 0
-            
+
             logger.info(f"Ingested {len(notes)} notes")
-            
+
             # Step 2: Generate summary
             if self.demo_mode:
                 logger.info("Using demo summary generation (no OpenAI calls)")
                 summary = self._generate_demo_summary(notes)
             else:
                 summary = self.generate_summary(notes)
-            
+
             # Step 3: Create GitHub issues
             action_items = summary.get("action_items", [])
             if self.demo_mode:
@@ -355,10 +355,10 @@ Format as JSON with keys: highlights, action_items, assessment"""
             else:
                 logger.info("No action items to create issues from")
                 issues = []
-            
+
             # Step 4: Save output
             output_file = self.save_output(notes, summary, issues)
-            
+
             # Summary
             duration = (datetime.now(timezone.utc) - start_time).total_seconds()
             logger.info("=" * 60)
@@ -368,7 +368,7 @@ Format as JSON with keys: highlights, action_items, assessment"""
             logger.info(f"   Issues: {len(issues)}")
             logger.info(f"   Output: {output_file}")
             logger.info("=" * 60)
-            
+
             if self.demo_mode:
                 logger.info("")
                 logger.info("💡 To enable live API calls:")
@@ -376,14 +376,14 @@ Format as JSON with keys: highlights, action_items, assessment"""
                 logger.info("   2. Configure .env.local with API keys")
                 logger.info("   3. Run again: python3 scripts/daily_v2.py")
                 logger.info("")
-            
+
             # Final success banner
             logger.info("=" * 60)
             logger.info("=== Daily automation run finished successfully ===")
             logger.info("=" * 60)
-            
+
             return 0
-            
+
         except Exception as e:
             logger.error("=" * 60)
             logger.error(f"❌ Automation failed: {e}")
@@ -395,15 +395,15 @@ Format as JSON with keys: highlights, action_items, assessment"""
 def main(argv: Optional[List[str]] = None) -> int:
     """
     Main entry point for the daily automation runner.
-    
+
     Args:
         argv: Command-line arguments (defaults to sys.argv if None)
-        
+
     Returns:
         0 on success, 1 on failure
     """
     import argparse
-    
+
     parser = argparse.ArgumentParser(
         description="Run the daily automation workflow.",
         epilog="Example: python3 scripts/daily_v2.py --demo"
@@ -418,12 +418,12 @@ def main(argv: Optional[List[str]] = None) -> int:
         action="store_true",
         help="Alias for --demo (no API calls, no external changes)"
     )
-    
+
     args = parser.parse_args(argv)
-    
+
     # Support both --demo and --dry-run flags
     demo_mode = args.demo or args.dry_run
-    
+
     try:
         automation = DailyAutomation(demo_mode=demo_mode)
         return automation.run()
