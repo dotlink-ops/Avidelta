@@ -24,17 +24,42 @@ import os
 import sys
 import json
 import logging
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
-# Configure logging first (before any other code)
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%Y-%m-%dT%H:%M:%S%z",
-)
-logger = logging.getLogger(__name__)
+
+def configure_logging() -> logging.Logger:
+    """Configure structured logging with env-driven levels."""
+
+    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    level_name = os.getenv("LOG_LEVEL", "INFO").upper()
+    level = getattr(logging, level_name, logging.INFO)
+
+    # Ensure every log record gets the run_id field even without adapters
+    old_factory = logging.getLogRecordFactory()
+
+    def record_factory(*args, **kwargs):
+        record = old_factory(*args, **kwargs)
+        if not hasattr(record, "run_id"):
+            record.run_id = run_id
+        return record
+
+    logging.setLogRecordFactory(record_factory)
+
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)s [%(levelname)s] [run_id=%(run_id)s] %(name)s: %(message)s",
+        datefmt="%Y-%m-%dT%H:%M:%S%z",
+    )
+
+    logger = logging.getLogger(__name__)
+    logger.debug("Logging configured", extra={"run_id": run_id})
+    return logger
+
+
+logger = configure_logging()
 
 # Third-party imports (with fallback for demo mode)
 try:
@@ -48,28 +73,81 @@ except ImportError:
     logger.warning("   Running in DEMO MODE (no actual API calls)")
 
 
+@dataclass
+class AutomationConfig:
+    openai_api_key: Optional[str]
+    github_token: Optional[str]
+    repo_name: Optional[str]
+    output_dir: Path
+    notes_source: Path
+    demo_mode: bool
+
+    @classmethod
+    def load(cls, demo_mode: bool, project_root: Path) -> "AutomationConfig":
+        """Load configuration from environment variables with sensible defaults."""
+
+        if HAS_DEPS:
+            load_dotenv(project_root / ".env.local")
+
+        output_dir = Path(os.getenv("OUTPUT_DIR", project_root / "output"))
+        notes_source = Path(os.getenv("NOTES_SOURCE", project_root / "output" / "notes"))
+
+        return cls(
+            openai_api_key=os.getenv("OPENAI_API_KEY"),
+            github_token=os.getenv("GITHUB_TOKEN"),
+            repo_name=os.getenv("REPO_NAME"),
+            output_dir=output_dir,
+            notes_source=notes_source,
+            demo_mode=demo_mode,
+        )
+
+    def missing_required(self) -> List[str]:
+        """Return a list of missing required env vars with guidance."""
+
+        missing = []
+        if not self.openai_api_key or self.openai_api_key == "your-openai-api-key-here":
+            missing.append("OPENAI_API_KEY (set a valid OpenAI API key)")
+
+        if not self.github_token or self.github_token == "your-github-token-here":
+            missing.append("GITHUB_TOKEN (provide a PAT with repo scope)")
+
+        if not self.repo_name or self.repo_name == "owner/repo":
+            missing.append("REPO_NAME (format: owner/repo)")
+
+        return missing
+
+
 class DailyAutomation:
     """Main automation orchestrator"""
 
     def __init__(self, demo_mode: bool = False):
-        self.demo_mode = demo_mode or not HAS_DEPS
         self.project_root = Path(__file__).parent.parent
-        self.output_dir = Path(os.getenv("OUTPUT_DIR", self.project_root / "output"))
-        self.notes_source = Path(os.getenv("NOTES_SOURCE", self.project_root / "output" / "notes"))
-        
+        self.demo_mode = demo_mode or not HAS_DEPS
+        self.config = AutomationConfig.load(self.demo_mode, self.project_root)
+
+        self.output_dir = self.config.output_dir
+        self.notes_source = self.config.notes_source
+
         # Ensure directories exist
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.notes_source.mkdir(parents=True, exist_ok=True)
-        
+
         # Initialize clients
         self.openai_client: Optional[OpenAI] = None
         self.github_client: Optional[Github] = None
         self.repo = None
-        
+
         if not self.demo_mode:
             self._initialize_clients()
-        
-        logger.info(f"Initialized DailyAutomation (demo_mode={self.demo_mode})")
+
+        logger.info(
+            "Initialized DailyAutomation",
+            extra={
+                "demo_mode": self.demo_mode,
+                "output_dir": str(self.output_dir),
+                "notes_source": str(self.notes_source),
+            },
+        )
 
     def _initialize_clients(self) -> None:
         """
@@ -77,45 +155,49 @@ class DailyAutomation:
         
         Raises RuntimeError if required environment variables are missing.
         """
-        # Load environment variables
-        load_dotenv(self.project_root / ".env.local")
-        
         # Check for required environment variables
-        missing = []
-        
-        openai_api_key = os.getenv("OPENAI_API_KEY")
-        if not openai_api_key or openai_api_key == "your-openai-api-key-here":
-            missing.append("OPENAI_API_KEY")
-        
-        github_token = os.getenv("GITHUB_TOKEN")
-        if not github_token or github_token == "your-github-token-here":
-            missing.append("GITHUB_TOKEN")
-        
-        repo_name = os.getenv("REPO_NAME")
-        if not repo_name or repo_name == "owner/repo":
-            missing.append("REPO_NAME")
-        
+        missing = self.config.missing_required()
+
         if missing:
+            for env_var in missing:
+                logger.error(
+                    "Missing required configuration",
+                    extra={
+                        "env_var": env_var,
+                        "hint": "Set in .env.local or export before running",
+                    },
+                )
+
             msg = (
-                f"Missing required environment variables: {', '.join(missing)}. "
+                "Required environment variables are missing. "
                 "Set them in .env.local or run with --demo flag. "
-                "See README.md for setup instructions."
+                f"Missing: {', '.join(missing)}"
             )
-            logger.error(f"❌ {msg}")
             raise RuntimeError(msg)
-        
+
         # Initialize API clients
         try:
-            self.openai_client = OpenAI(api_key=openai_api_key)
-            self.github_client = Github(github_token)
-            self.repo = self.github_client.get_repo(repo_name)
-            logger.info(f"✓ API clients initialized successfully (repo: {repo_name})")
+            self.openai_client = OpenAI(api_key=self.config.openai_api_key)
+            self.github_client = Github(self.config.github_token)
+            self.repo = self.github_client.get_repo(self.config.repo_name)
+            logger.info(
+                "✓ API clients initialized successfully",
+                extra={
+                    "repo": self.config.repo_name,
+                },
+            )
         except GithubException as e:
-            logger.error(f"❌ Failed to access repository {repo_name}: {e}")
+            logger.error(
+                "❌ Failed to access repository",
+                extra={"repo": self.config.repo_name, "error": str(e)},
+            )
             logger.error("   Check that GITHUB_TOKEN has 'repo' scope and REPO_NAME is correct")
             raise
         except Exception as e:
-            logger.error(f"❌ Failed to initialize API clients: {e}")
+            logger.error(
+                "❌ Failed to initialize API clients",
+                extra={"error": str(e)},
+            )
             raise
 
     def ingest_notes(self) -> List[str]:
@@ -281,7 +363,7 @@ Format as JSON with keys: highlights, action_items, assessment"""
         output_data = {
             "date": timestamp.strftime("%Y-%m-%d"),
             "created_at": timestamp.isoformat(),
-            "repo": os.getenv("REPO_NAME", "dotlink-ops/nextjs"),
+            "repo": self.config.repo_name or "dotlink-ops/nextjs",
             "summary_bullets": summary.get("highlights", []),
             "action_items": summary.get("action_items", []),
             "assessment": summary.get("assessment", ""),
