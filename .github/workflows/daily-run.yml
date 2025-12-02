@@ -7,9 +7,8 @@ on:
     - cron: "0 14 * * *"
   workflow_dispatch:  # Allow manual triggering
 
-# Least-privilege permissions (only what's needed)
-permissions:
-  contents: write  # Required for git push
+# Default to no permissions - job specifies what it needs
+permissions: {}
 
 jobs:
   daily-run:
@@ -75,7 +74,7 @@ jobs:
             exit 1
           fi
           echo "✓ daily_summary.json created successfully"
-          cat output/daily_summary.json | head -20
+          head -20 output/daily_summary.json
 
       - name: Copy to public data directory
         run: |
@@ -97,13 +96,7 @@ jobs:
 
           # Commit with timestamp
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
-          git commit -m "chore: daily run output - $TIMESTAMP
-
-          Automated daily run:
-          - Generated new daily_summary.json
-          - Updated public/data for API consumption
-
-          Triggered by: GitHub Actions cron (daily-run.yml)"
+          git commit -m "chore: daily run output - $TIMESTAMP [skip ci]"
 
           git push origin main
           echo "✓ Changes pushed to main - Vercel will auto-deploy"
