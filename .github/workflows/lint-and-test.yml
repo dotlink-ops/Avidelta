@@ -17,7 +17,7 @@ jobs:
     steps:
       # Grab the repository contents so the runner can work with the code
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Install the Node.js version we expect developers to use; cache npm for speed
       - name: Set up Node.js 20 (LTS)
