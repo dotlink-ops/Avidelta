@@ -424,9 +424,9 @@ class DailyAutomation:
 
         for item in action_items:
             try:
-                # Skip empty or whitespace-only items
-                if not item or not str(item).strip():
-                    logger.warning(f"  Skipping empty action item")
+                # Skip invalid items (None, empty, or whitespace-only)
+                if item is None or not str(item).strip():
+                    logger.warning(f"  Skipping empty or invalid action item")
                     continue
                     
                 issue = self._create_issue_from_item(str(item))
@@ -518,8 +518,8 @@ class DailyAutomation:
         assessment = summary.get("assessment") or ""
         
         # Ensure lists contain only non-empty strings to avoid formatting errors
-        highlights = [str(h).strip() for h in highlights if h is not None and str(h).strip()]
-        action_items = [str(item).strip() for item in action_items if item is not None and str(item).strip()]
+        highlights = [s for h in highlights if h is not None and (s := str(h).strip())]
+        action_items = [s for item in action_items if item is not None and (s := str(item).strip())]
         
         # Build raw_text with proper handling of empty action items
         raw_text_parts = [f"Summary:\n{assessment}"]
