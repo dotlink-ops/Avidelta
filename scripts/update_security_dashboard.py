@@ -216,24 +216,27 @@ def redact_secrets_health_column(dashboard_text: str) -> str:
             # parts: [ '', Q, completion, secrets, workflow, gov, grade, '' ]
             if len(parts) < 8:
                 res.append(line)
+        last_processed_idx = header_idx + 2
+        for i, line in enumerate(lines[header_idx + 2:], start=header_idx + 2):
+            # Redact only table data rows (must look like: '| ... | ... | ... | ... | ... |')
+            if not line.strip().startswith("|") or line.count("|") < 6:
+                res.append(line)
+                last_processed_idx = i + 1
+                continue
+            parts = line.split("|")
+            # parts: [ '', Q, completion, secrets, workflow, gov, grade, '' ]
+            if len(parts) < 7:
+                res.append(line)
+                last_processed_idx = i + 1
                 continue
             # Redact secrets health (index 3)
             parts[3] = " [REDACTED] "
             res.append("|".join(parts))
+            last_processed_idx = i + 1
     else:
-        # Fallback: redact all table rows in case header matching failed
-        def redact_secrets_col(line):
-            # This matches and redacts the "Secrets Health" column (3rd field)
-            # Assumes: | ... | ... | secrets | ... | ... | ... |
-            table_row = re.compile(r"^(\|\s*[^\|]+\s*\|\s*[^\|]+\s*\|)(\s*[^\|]+\s*)(\|[^\n]*)$")
-            m = table_row.match(line)
-            if m:
-                return f"{m.group(1)} [REDACTED] {m.group(3)}"
-            return line
-        return "\n".join(redact_secrets_col(l) for l in dashboard_text.splitlines())
+        return dashboard_text  # can't find table, fallback
     # Add any below-table lines
-    # Already copied all lines after the table
-    res.extend(lines[len(res):])
+    res.extend(lines[last_processed_idx:])
     return "\n".join(res)
 
 
