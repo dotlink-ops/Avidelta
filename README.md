@@ -510,12 +510,19 @@ npm start
 # Test Python automation (demo mode)
 python3 scripts/daily_v2.py --demo
 
+# Test sales pipeline automation (demo mode)
+python3 scripts/sales_pipeline_pull.py --demo
+
+# Run sales pipeline test suite
+python3 scripts/test_sales_pipeline.py
+
 # Test Next.js build (production verification)
 npm run build
 
 # Test API endpoints (requires dev server running)
 curl http://localhost:3000/api/health
 curl http://localhost:3000/api/daily-summary | jq
+curl http://localhost:3000/api/sales-pipeline | jq
 
 # Run linting
 npm run lint
@@ -523,7 +530,9 @@ npm run lint
 
 **What Gets Tested:**
 - ✅ Python automation execution (demo mode)
-- ✅ Output file validation (`daily_summary.json` format)
+- ✅ Sales pipeline data pull (CSV and demo modes)
+- ✅ Sales pipeline analytics calculations
+- ✅ Output file validation (`daily_summary.json`, `sales_pipeline.json` format)
 - ✅ Next.js production build (zero errors)
 - ✅ TypeScript compilation (strict mode)
 - ✅ ESLint checks (code quality)
@@ -547,6 +556,7 @@ npm run lint
 |----------|-------------|---------|
 | `/` | Portfolio homepage | [View](https://ariadnenexus.com) |
 | `/api/daily-summary` | Automation output (JSON) | [View](https://ariadnenexus.com/api/daily-summary) |
+| `/api/sales-pipeline` | Sales pipeline data (JSON) | [View](https://ariadnenexus.com/api/sales-pipeline) |
 | `/api/demo/view` | Demo visualization | [View](https://ariadnenexus.com/api/demo/view) |
 | `/api/status` | Comprehensive status | [View](https://ariadnenexus.com/api/status) |
 
@@ -567,11 +577,13 @@ npm run lint
 # Production endpoints
 curl -sS https://ariadnenexus.com/api/status | jq
 curl -sS https://ariadnenexus.com/api/daily-summary | jq
+curl -sS https://ariadnenexus.com/api/sales-pipeline | jq
 curl -sS https://ariadnenexus.com/api/health
 
 # Local development
 curl -sS http://localhost:3000/api/status | jq
 curl -sS http://localhost:3000/api/daily-summary | jq
+curl -sS http://localhost:3000/api/sales-pipeline | jq
 ```
 
 ---

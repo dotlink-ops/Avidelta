@@ -189,6 +189,50 @@ export SALES_API_KEY=your-api-key
 
 ## Testing
 
+### Automated Test Suite
+
+Run the comprehensive test suite:
+
+```bash
+python3 scripts/test_sales_pipeline.py
+```
+
+**What it tests:**
+- Data model functionality (SalesDeal, PipelineSummary)
+- CSV parsing and validation
+- Analytics calculations (weighted value, stage distribution)
+- Demo mode execution
+- JSON output structure and format
+- Edge cases (empty data, 0% probability, 100% probability)
+
+**Expected output:**
+```
+============================================================
+Running Sales Pipeline Automation Tests
+============================================================
+
+Testing SalesDeal model...
+  ✓ SalesDeal model tests passed
+Testing PipelineSummary model...
+  ✓ PipelineSummary model tests passed
+Testing CSV parsing...
+  ✓ CSV parsing tests passed
+Testing analytics calculations...
+  ✓ Analytics calculation tests passed
+Testing demo mode...
+  ✓ Demo mode tests passed
+Testing JSON output structure...
+  ✓ JSON output structure tests passed
+Testing edge cases...
+  ✓ Edge case tests passed
+
+============================================================
+Test Results: 7 passed, 0 failed
+============================================================
+```
+
+### Manual Testing
+
 ### Run in Demo Mode
 
 ```bash
@@ -201,6 +245,16 @@ python3 scripts/sales_pipeline_pull.py --demo
 export SALES_DATA_SOURCE=./output/sample_sales_data.csv
 export SALES_DATA_TYPE=csv
 python3 scripts/sales_pipeline_pull.py
+```
+
+### Test API Endpoint
+
+```bash
+# Start Next.js dev server
+npm run dev
+
+# In another terminal, test the API
+curl http://localhost:3000/api/sales-pipeline | jq
 ```
 
 ### Verify Output
@@ -248,9 +302,53 @@ cat output/sales_pipeline.json | jq '.deals'
 
 ## Integration with Dashboard
 
-The sales pipeline data is designed to integrate with Next.js dashboards:
+The sales pipeline data is designed to integrate with Next.js dashboards via the API endpoint:
 
-1. **API Route**: Create `app/api/sales-pipeline/route.ts`:
+### API Endpoint: `/api/sales-pipeline`
+
+**GET** request returns the latest sales pipeline data in JSON format.
+
+**Response Structure:**
+```json
+{
+  "date": "2025-12-10",
+  "created_at": "2025-12-10T20:28:03Z",
+  "summary": {
+    "total_deals": 8,
+    "total_value": 685000.00,
+    "weighted_value": 485500.00,
+    "avg_deal_size": 85625.00,
+    "deals_by_stage": {...},
+    "value_by_stage": {...}
+  },
+  "deals": [...],
+  "metadata": {...},
+  "_metadata": {
+    "fetched_at": "2025-12-10T20:30:00Z",
+    "api_version": "1.0",
+    "source": "sales_pipeline.json"
+  }
+}
+```
+
+**Caching:** 60 seconds with stale-while-revalidate (300 seconds)
+
+**Error Handling:**
+- `404`: Sales pipeline data file not found (run automation first)
+- `500`: Server error reading or parsing the data
+
+### Usage Example
+
+**1. Fetch from API:**
+```bash
+# Local development
+curl http://localhost:3000/api/sales-pipeline | jq
+
+# Production
+curl https://ariadnenexus.com/api/sales-pipeline | jq
+```
+
+**2. React Component:**
 
 ```typescript
 import { NextResponse } from 'next/server';
