@@ -13,6 +13,7 @@
 **Avidelta** (branded as **Ariadne Nexus** for clients) is a **production automation platform** that demonstrates how to build AI-powered workflows for real-world business operations. It combines:
 
 - **Python automation engine** (`daily_v2.py`) - Ingests unstructured notes, generates structured summaries with OpenAI, creates GitHub issues from action items
+- **Sales pipeline automation** (`sales_pipeline_pull.py`) - Automated data pull from CRM systems, generates sales metrics and insights
 - **Next.js 16 dashboard** - Modern App Router frontend with live automation status, workflow history, and security metrics
 - **GitHub Actions CI/CD** - Automated daily runs, security scanning, pre-commit hooks, and health checks
 - **Production security** - Secret health monitoring, CSP reporting, security dashboards, automated compliance tracking
@@ -178,11 +179,12 @@ This project provides a complete automation workflow:
 
 1. **📥 Note Ingestion**: Reads markdown/text files from `output/notes/`
 2. **🤖 AI Summarization**: Uses OpenAI GPT-4 Turbo to extract highlights, action items, and assessments
-3. **📋 GitHub Integration**: Automatically creates labeled issues from action items
-4. **💾 JSON Output**: Saves structured data to `output/daily_summary.json`
-5. **🌐 Next.js Dashboard**: Serves results through modern API routes and React components
-6. **📊 Audit Logs**: Maintains timestamped audit trail in `output/audit_*.json`
-7. **⏰ GitHub Actions**: Automated daily runs at 5 AM PT with artifact uploads
+3. **📊 Sales Pipeline Tracking**: Automated CRM data pull with metrics and deal tracking
+4. **📋 GitHub Integration**: Automatically creates labeled issues from action items
+5. **💾 JSON Output**: Saves structured data to `output/daily_summary.json`
+6. **🌐 Next.js Dashboard**: Serves results through modern API routes and React components
+7. **📊 Audit Logs**: Maintains timestamped audit trail in `output/audit_*.json`
+8. **⏰ GitHub Actions**: Automated daily runs at 5 AM PT with artifact uploads
 
 ### Demo Mode
 
@@ -356,7 +358,9 @@ open http://localhost:3000/api/daily-summary
 | `python3 scripts/daily_v2.py --demo` | Run with demo data | Testing without API keys |
 | `python3 scripts/daily_v2.py --dry-run` | Alias for --demo | Common convention for safe testing |
 | `python3 scripts/daily_v2.py` | Run in production mode | Real automation with API keys configured |
-| `source .venv/bin/activate` | Activate Python virtualenv | Before running scripts manually ||
+| `./scripts/run_sales_pipeline.sh --demo` | Pull sales pipeline data | Testing sales automation |
+| `./scripts/run_sales_pipeline.sh` | Pull sales pipeline (prod) | Real CRM data pull |
+| `source .venv/bin/activate` | Activate Python virtualenv | Before running scripts manually |
 | `./run-daily.sh` | Automated run + sync | Convenience wrapper for production |
 
 ### Live Deployment
@@ -772,6 +776,7 @@ This isn't a tutorial project or toy application—it's a **production system** 
 - **AUTOMATION_GUIDE.md**: Detailed automation documentation
 - **QUICKSTART.md**: Quick reference for common tasks
 - **DEMO.md**: Step-by-step demo walkthrough
+- **docs/SALES_PIPELINE.md**: Sales pipeline automation guide
 - **UPWORK.md**: Portfolio messaging and one-liners
 - **PRODUCTION_READY.md**: Production readiness verification
 - **.copilot-instructions.md**: AI assistant usage guide

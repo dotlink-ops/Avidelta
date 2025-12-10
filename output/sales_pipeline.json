@@ -1,0 +1,109 @@
+{
+  "date": "2025-12-10",
+  "total_deals": 5,
+  "total_value": 750000.0,
+  "weighted_value": 407250.0,
+  "deals_by_stage": {
+    "proposal": 2,
+    "negotiation": 1,
+    "qualification": 1,
+    "prospecting": 1
+  },
+  "top_deals": [
+    {
+      "deal_id": "DEAL-003",
+      "company_name": "Global Solutions Ltd",
+      "deal_value": 250000.0,
+      "stage": "qualification",
+      "probability": 40,
+      "expected_close_date": "2026-01-30",
+      "owner": "Sarah Chen",
+      "last_activity": "2025-12-10",
+      "notes": "Discovery call scheduled for next week"
+    },
+    {
+      "deal_id": "DEAL-005",
+      "company_name": "DataFlow Analytics",
+      "deal_value": 180000.0,
+      "stage": "proposal",
+      "probability": 70,
+      "expected_close_date": "2025-12-28",
+      "owner": "Mike Johnson",
+      "last_activity": "2025-12-10",
+      "notes": "Custom proposal sent, follow-up call scheduled"
+    },
+    {
+      "deal_id": "DEAL-001",
+      "company_name": "Acme Corporation",
+      "deal_value": 150000.0,
+      "stage": "proposal",
+      "probability": 65,
+      "expected_close_date": "2025-12-20",
+      "owner": "Sarah Chen",
+      "last_activity": "2025-12-10",
+      "notes": "Technical demo completed, awaiting proposal review"
+    }
+  ],
+  "deals": [
+    {
+      "deal_id": "DEAL-001",
+      "company_name": "Acme Corporation",
+      "deal_value": 150000.0,
+      "stage": "proposal",
+      "probability": 65,
+      "expected_close_date": "2025-12-20",
+      "owner": "Sarah Chen",
+      "last_activity": "2025-12-10",
+      "notes": "Technical demo completed, awaiting proposal review"
+    },
+    {
+      "deal_id": "DEAL-002",
+      "company_name": "TechStart Inc",
+      "deal_value": 75000.0,
+      "stage": "negotiation",
+      "probability": 80,
+      "expected_close_date": "2025-12-15",
+      "owner": "Mike Johnson",
+      "last_activity": "2025-12-10",
+      "notes": "In final contract review, legal approval pending"
+    },
+    {
+      "deal_id": "DEAL-003",
+      "company_name": "Global Solutions Ltd",
+      "deal_value": 250000.0,
+      "stage": "qualification",
+      "probability": 40,
+      "expected_close_date": "2026-01-30",
+      "owner": "Sarah Chen",
+      "last_activity": "2025-12-10",
+      "notes": "Discovery call scheduled for next week"
+    },
+    {
+      "deal_id": "DEAL-004",
+      "company_name": "Innovate Systems",
+      "deal_value": 95000.0,
+      "stage": "prospecting",
+      "probability": 25,
+      "expected_close_date": "2026-02-15",
+      "owner": "Alex Rivera",
+      "last_activity": "2025-12-10",
+      "notes": "Initial outreach, awaiting response"
+    },
+    {
+      "deal_id": "DEAL-005",
+      "company_name": "DataFlow Analytics",
+      "deal_value": 180000.0,
+      "stage": "proposal",
+      "probability": 70,
+      "expected_close_date": "2025-12-28",
+      "owner": "Mike Johnson",
+      "last_activity": "2025-12-10",
+      "notes": "Custom proposal sent, follow-up call scheduled"
+    }
+  ],
+  "_metadata": {
+    "generated_at": "2025-12-10T20:22:02.415687+00:00",
+    "demo_mode": true,
+    "version": "1.0.0"
+  }
+}
