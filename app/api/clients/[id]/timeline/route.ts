@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+export const runtime = "edge";
+
 export async function GET(
   _request: NextRequest,
   context: { params: Promise<{ id: string }> }
