@@ -11,6 +11,8 @@ permissions:
 jobs:
   reassign:
     runs-on: ubuntu-latest
+    env:
+      TARGET_REVIEWERS: ${{ vars.TARGET_REVIEWERS }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,9 +24,11 @@ jobs:
             const OWNER = context.repo.owner;
             const REPO = context.repo.repo;
             const DAYS = 15;
-            // Use the org team slug here so the workflow requests team reviewers.
-            // Example: 'team-slug' -> will be requested via `team_reviewers`.
-            const TARGET_REVIEWERS = ['dotlink-ops']; // requested reviewer(s) - team slugs or usernames
+            // `TARGET_REVIEWERS` is read from the repository variable `TARGET_REVIEWERS`.
+            // Set it in repo settings as a comma-separated list of usernames or team slugs.
+            // Example: "alice,bob,team-slug"
+            const raw = process.env.TARGET_REVIEWERS || '';
+            const TARGET_REVIEWERS = raw.split(',').map(s => s.trim()).filter(Boolean);
 
             const cutoff = new Date(Date.now() - DAYS * 24 * 60 * 60 * 1000);
 
