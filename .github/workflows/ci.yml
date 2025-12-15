@@ -48,6 +48,16 @@ jobs:
             echo "⚠️  No lint script defined in package.json, skipping"
           fi
 
+      - name: Runtime policy check (Edge vs Node)
+        run: |
+          if [ -f package.json ] && npm run --silent 2>/dev/null | grep -q "check:runtime"; then
+            echo "Running runtime policy check..."
+            npm run check:runtime
+            echo "✓ Runtime policy check passed"
+          else
+            echo "⚠️  No check:runtime script defined in package.json, skipping runtime policy check"
+          fi
+
       - name: Build (Next.js)
         run: |
           if [ -f package.json ] && npm run --silent 2>/dev/null | grep -q "build"; then
