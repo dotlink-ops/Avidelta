@@ -1,3 +1,63 @@
+import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+
+// Runtime: Node.js (required)
+// Justification: Reads filesystem (run.json)
+export const runtime = "nodejs";
+
+type AutomationStatus = {
+  run_id: string;
+  status: "success" | "partial" | "failed";
+  started_at: string;
+  ended_at: string;
+  duration_sec: number;
+  demo_mode: boolean;
+  steps: Array<{
+    stage: string;
+    step: string;
+    status: string;
+    error?: string;
+  }>;
+  artifacts: Record<string, string>;
+};
+
+export async function GET() {
+  try {
+    const projectRoot = process.cwd();
+    const runFile = path.join(projectRoot, "output", "run.json");
+
+    if (!fs.existsSync(runFile)) {
+      return NextResponse.json(
+        {
+          status: "unknown",
+          message: "No run.json found. Automation may not have executed yet.",
+        },
+        { status: 404 }
+      );
+    }
+
+    const raw = fs.readFileSync(runFile, "utf-8");
+    const data = JSON.parse(raw) as AutomationStatus;
+
+    return NextResponse.json(
+      {
+        ok: true,
+        automation: data,
+      },
+      { status: 200 }
+    );
+  } catch (err: any) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Failed to read automation status",
+        detail: err?.message ?? String(err),
+      },
+      { status: 500 }
+    );
+  }
+}
 // Runtime: Node.js (default)
 // Justification: Uses process/env/IO
 import { NextResponse } from 'next/server';

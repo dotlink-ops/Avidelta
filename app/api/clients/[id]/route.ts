@@ -7,7 +7,8 @@ export async function GET(
   _request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<StatusResponse>> {
-  const { id } = await context.params;
+  // params are available if needed; not required for this handler
+  await context.params;
 
   return NextResponse.json<StatusResponse>({
     ok: true,

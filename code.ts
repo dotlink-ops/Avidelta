@@ -146,12 +146,12 @@ figma.ui.onmessage = async (msg) => {
   // 6. BUILD SLIDE DECK
   // =============================================================
 
-  const intro = await createSlide("Ariadne Nexus — System Blueprint");
-  const s2    = await createSlide("Architecture Overview", 1200);
-  const s3    = await createSlide("Vision & Spatial Intelligence", 2400);
-  const s4    = await createSlide("Automation Engine (Python)", 3600);
-  const s5    = await createSlide("Integrations & Signals", 4800);
-  const s6    = await createSlide("Powered by Ariadne Nexus", 6000);
+  await createSlide("Ariadne Nexus — System Blueprint");
+  await createSlide("Architecture Overview", 1200);
+  await createSlide("Vision & Spatial Intelligence", 2400);
+  await createSlide("Automation Engine (Python)", 3600);
+  await createSlide("Integrations & Signals", 4800);
+  await createSlide("Powered by Ariadne Nexus", 6000);
 
   figma.notify("Ariadne Nexus — V2 Blueprint Generated ✔");
 };

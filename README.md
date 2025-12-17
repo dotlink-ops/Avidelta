@@ -43,7 +43,14 @@ See `design/README.md` for the canonical Figma link and guidelines.
 
 ## 💼 What This Project Demonstrates
 
-This project shows how I design and ship **automation-first workflows** that are ready for clients, investors, and teammates:
+## Runtime Rule
+
+All API routes run on Node by default.
+
+Edge runtime is opt-in, must be listed in `runtime-policy.json`, and must not use Node APIs.
+
+This keeps humans and machines aligned.
+
 
 - A one-command **daily runner** (Python) that:
   - Activates a virtual environment
