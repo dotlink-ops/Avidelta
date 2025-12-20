@@ -5,14 +5,20 @@ on:
   schedule:
     - cron: "0 0 1 * *"  # 1st of every month at 00:00 UTC
 
-permissions: {}
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
   update-metrics:
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       contents: write
-      actions: read
+      pull-requests: write
+      issues: write
 
     steps:
       - name: Checkout repository

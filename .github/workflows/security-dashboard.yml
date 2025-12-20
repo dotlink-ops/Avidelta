@@ -10,14 +10,21 @@ on:
     - cron: "0 9 * * MON"  # Every Monday 09:00 UTC
   workflow_dispatch:
 
-permissions: {}
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
   update-security-dashboard:
     name: Update Security Dashboard
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       contents: write  # Required for git push
+      pull-requests: write
+      issues: write
 
     steps:
       - name: Checkout repository
