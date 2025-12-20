@@ -1,5 +1,6 @@
 # Sales Pipeline Automation
 
+<<<<<<< HEAD
 Automated data pull for sales pipeline tracking and reporting.
 
 ## Overview
@@ -26,10 +27,40 @@ python3 scripts/pull_sales_pipeline.py --demo
 cat output/sales_pipeline.json | jq
 ```
 
+=======
+## Overview
+
+The sales pipeline automation module provides automated data collection from CRM systems and sales tracking tools. It integrates seamlessly with the existing daily automation workflow.
+
+## Features
+
+- **Automated Data Pull**: Scheduled or on-demand data collection from sales pipeline sources
+- **Multiple CRM Support**: Designed to support HubSpot, Salesforce, Pipedrive, and custom sources
+- **Demo Mode**: Works out-of-the-box with realistic demo data for testing
+- **Historical Tracking**: Maintains cache of all pipeline snapshots with timestamps
+- **Comprehensive Metrics**: Tracks total leads, pipeline value, weighted value, and stage breakdown
+
+## Quick Start
+
+### Demo Mode (No Configuration Required)
+
+```bash
+# Run automation with demo sales pipeline data
+python3 scripts/daily_v2.py --demo
+```
+
+This will:
+1. Pull demo sales pipeline data (5 sample leads)
+2. Save to `output/sales_pipeline.json`
+3. Create timestamped cache file in `output/sales_cache/`
+4. Include pipeline summary in `output/daily_summary.json`
+
+>>>>>>> main
 ### Production Mode
 
 1. **Configure Environment Variables**
 
+<<<<<<< HEAD
    Edit `.env.local`:
    ```bash
    # Data source: demo, salesforce, hubspot, csv
@@ -73,171 +104,369 @@ The pipeline data includes:
     "avg_deal_size": 35625,
     "weighted_pipeline": 159750
   },
-  "top_opportunities": [
-    {"name": "Enterprise Platform Migration", "value": 85000}
-  ]
-}
-```
+  # Sales Pipeline Automation
 
-## API Endpoint
+  Automated data collection and reporting for the sales pipeline.
 
-### GET `/api/sales-pipeline`
+  ## Overview
 
-Returns the latest sales pipeline data.
+  The sales pipeline automation module provides automated data collection from CRM systems and sales tracking tools. It integrates with the existing daily automation workflow and supports multiple data sources (demo data, CSV/JSON files, and popular CRMs such as HubSpot, Salesforce, and Pipedrive).
 
-**Example Request:**
-```bash
-curl http://localhost:3000/api/sales-pipeline | jq
-```
+  ## Features
 
-**Example Response:**
-```json
-{
-  "timestamp": "2025-12-10T20:21:50+00:00",
-  "source": "demo",
-  "total_pipeline_value": 285000,
-  "deals_count": 8,
-  "deals": [...],
-  "metrics": {...},
-  "_metadata": {
-    "fetched_at": "2025-12-10T20:25:00.000Z",
-    "api_version": "1.0"
+  - Automated data pulls (scheduled or on-demand)
+  - Multiple CRM/provider support (HubSpot, Salesforce, Pipedrive, CSV/JSON, demo)
+  - Demo mode for local development and testing
+  - Historical tracking with timestamped cache snapshots (`output/sales_cache`)
+  - Structured JSON output for API consumption and dashboard integration
+  - Inclusion of pipeline summary into `daily_summary.json`
+
+  ## Quick Start
+
+  ### Demo Mode (no API keys required)
+
+  ```bash
+  # Run automation with demo sales pipeline data
+  python3 scripts/daily_v2.py --demo
+
+  # Or run the dedicated sales pipeline pull (legacy helper)
+  python3 scripts/sales_pipeline_pull.py --demo
+
+  # View the output
+  cat output/sales_pipeline.json | jq
+  ```
+
+  This will:
+  1. Pull demo sales pipeline data
+  2. Save to `output/sales_pipeline.json`
+  3. Create a timestamped cache file in `output/sales_cache/`
+  4. Include pipeline summary in `output/daily_summary.json`
+
+  ### Production Mode (live API)
+
+  1. Create or edit `.env.local` with your provider config:
+
+  ```bash
+  # Sales Pipeline Configuration
+  SALES_PIPELINE_SOURCE=hubspot  # Options: demo, hubspot, salesforce, pipedrive, csv, json
+  SALES_PIPELINE_API_KEY=your-api-key-here
+  SALES_PIPELINE_ENDPOINT=https://api.hubspot.com/crm/v3/objects/deals  # Optional
+  SALES_PIPELINE_CACHE=./output/sales_cache  # Optional
+  ```
+
+  2. Run automation with live API calls:
+
+  ```bash
+  python3 scripts/daily_v2.py
+  ```
+
+  ## Data Structure
+
+  The `sales_pipeline.json` output contains a snapshot of the pipeline. Example schema:
+
+  ```json
+  {
+    "timestamp": "2025-12-10T20:21:45.039161+00:00",
+    "source": "demo",
+    "total_leads": 5,
+    "total_value": 462000.0,
+    "weighted_value": 254500.0,
+    "stage_breakdown": {
+      "Qualification": 2,
+      "Proposal": 1,
+      "Negotiation": 1,
+      "Closed Won": 1
+    },
+    "leads": [
+      {
+        "id": "lead-001",
+        "name": "Enterprise Integration Project",
+        "company": "TechCorp Solutions",
+        "stage": "Qualification",
+        "value": 150000.0,
+        "probability": 0.3,
+        "owner": "Sales Rep A",
+        "created_at": "2025-11-15T10:00:00Z",
+        "updated_at": "2025-12-09T14:30:00Z"
+      }
+    ],
+    "metadata": {
+      "demo": true
+    }
   }
-}
+  ```
+
+  ## API Endpoint
+
+  ### GET `/api/sales-pipeline`
+
+  Returns the latest sales pipeline snapshot. Example:
+
+  ```bash
+  curl http://localhost:3000/api/sales-pipeline | jq
+  ```
+
+  ## Extending to New Data Sources
+
+  To add support for a new CRM or data source:
+
+  1. Add integration code (e.g., in `scripts/lib/clients.py`) to pull and normalize data into the repository schema.
+  2. Update source detection to include the new provider (e.g., in `pull_pipeline_data()` or configuration parsing).
+  3. Configure environment variables for credentials and endpoints in `.env.local`.
+
+  Example integration stub:
+
+  ```python
+  def _pull_from_your_crm(self) -> Dict[str, Any]:
+      """Pull data from Your CRM API and return normalized pipeline dict."""
+      # Implement API calls and transformation here
+      return pipeline_data
+  ```
+
+  ## Notes
+
+  - The feature supports both a dedicated pull helper (`scripts/sales_pipeline_pull.py`) and integration into the daily runner (`scripts/daily_v2.py`).
+  - Outputs are saved under `output/` and are safe to inspect in demo mode.
+
 ```
 
-## Extending to New Data Sources
+**Note**: HubSpot integration is planned but not yet implemented. Currently falls back to demo data.
 
-To add support for a new CRM or data source:
+### Salesforce (Placeholder)
 
-1. **Add Integration Code**
+```bash
+SALES_PIPELINE_SOURCE=salesforce
+SALES_PIPELINE_API_KEY=your-salesforce-token
+```
 
-   Edit `scripts/lib/clients.py` and add a new method to `SalesPipelineClient`:
+**Note**: Salesforce integration is planned but not yet implemented. Currently falls back to demo data.
 
-   ```python
-   def _pull_from_your_crm(self) -> Dict[str, Any]:
-       """Pull data from Your CRM API."""
-       # Add your integration code here
-       # Make API calls, transform data
-       # Return in standard format
-       return pipeline_data
-   ```
+### Pipedrive (Placeholder)
 
-2. **Update Source Detection**
+```bash
+SALES_PIPELINE_SOURCE=pipedrive
+SALES_PIPELINE_API_KEY=your-pipedrive-api-token
+```
 
-   In `pull_pipeline_data()` method, add your source:
+**Note**: Pipedrive integration is planned but not yet implemented. Currently falls back to demo data.
 
-   ```python
-   elif self.source == "your-crm":
-       return self._pull_from_your_crm()
-   ```
+## Architecture
+
+### Module Structure
+
+```
+scripts/
+├── lib/
+│   ├── sales_pipeline.py    # Sales pipeline data source module
+│   ├── models.py             # Data models
+│   └── clients.py            # API client wrappers
+└── daily_v2.py              # Main automation runner (with pipeline integration)
+
+output/
+├── sales_pipeline.json      # Latest pipeline snapshot
+└── sales_cache/            # Historical snapshots
+    └── sales_pipeline_YYYYMMDD_HHMMSS.json
+```
+
+### Data Flow
+
+```
+┌─────────────────────┐
+│   CRM System        │
+│ (HubSpot/SF/etc)    │
+└──────────┬──────────┘
+           │
+           v
+┌─────────────────────┐
+│ SalesPipelineSource │
+│  - pull_data()      │
+│  - save_to_cache()  │
+└──────────┬──────────┘
+           │
+           v
+┌─────────────────────┐
+│  daily_v2.py        │
+│  - Integration      │
+│  - Aggregation      │
+└──────────┬──────────┘
+           │
+           v
+┌─────────────────────┐
+│  Output Files       │
+│  - sales_pipeline   │
+│  - daily_summary    │
+│  - cache files      │
+└─────────────────────┘
+```
+
+## API Reference
+
+### SalesPipelineDataSource
+
+Main class for pulling sales pipeline data.
+
+```python
+from lib.sales_pipeline import create_sales_pipeline_source
+
+# Create data source
+pipeline_source = create_sales_pipeline_source(
+    project_root=Path("."),
+    demo_mode=False
+)
+
+# Pull data
+pipeline_data = pipeline_source.pull_data()
+
+# Save to cache
+cache_file = pipeline_source.save_to_cache(pipeline_data)
+```
+
+### SalesPipelineData
+
+Data container for pipeline information.
+
+**Attributes:**
+- `timestamp` (str): ISO 8601 timestamp of data pull
+- `total_leads` (int): Total number of leads in pipeline
+- `total_value` (float): Sum of all lead values
+- `weighted_value` (float): Sum of value × probability for all leads
+- `stage_breakdown` (Dict[str, int]): Count of leads by stage
+- `leads` (List[SalesPipelineLead]): List of individual leads
+- `source` (str): Data source identifier
+- `demo` (bool): Whether this is demo data
+
+### SalesPipelineLead
+
+Individual lead/opportunity data.
+
+**Attributes:**
+- `id` (str): Unique lead identifier
+- `name` (str): Lead/opportunity name
+- `company` (str): Company name
+- `stage` (str): Current pipeline stage
+- `value` (float): Monetary value
+- `probability` (float): Win probability (0.0-1.0)
+- `owner` (str): Sales rep/owner
+- `created_at` (str): Creation timestamp
+- `updated_at` (str): Last update timestamp
+
+## Extending the Integration
+
+### Adding a New CRM Source
+
+1. **Add Handler Method**
+
+Edit `scripts/lib/sales_pipeline.py`:
+
+```python
+def _pull_mycrm(self) -> SalesPipelineData:
+    """Pull data from MyCRM."""
+    if not self.config.api_key:
+        raise RuntimeError("MyCRM API key not configured")
+    
+    # Implement API call
+    import requests
+    response = requests.get(
+        self.config.api_endpoint,
+        headers={"Authorization": f"Bearer {self.config.api_key}"}
+    )
+    data = response.json()
+    
+    # Transform to SalesPipelineData
+    leads = [
+        SalesPipelineLead(
+            id=item["id"],
+            name=item["name"],
+            # ... map fields
+        )
+        for item in data["deals"]
+    ]
+    
+    # Return structured data
+    return SalesPipelineData(...)
+```
+
+2. **Register Handler**
+
+Update the `pull_data()` method:
+
+```python
+handlers = {
+    "hubspot": self._pull_hubspot,
+    "salesforce": self._pull_salesforce,
+    "pipedrive": self._pull_pipedrive,
+    "mycrm": self._pull_mycrm,  # Add new handler
+}
+```
 
 3. **Configure Environment**
 
-   Set in `.env.local`:
-   ```bash
-   SALES_PIPELINE_SOURCE=your-crm
-   SALES_PIPELINE_API_KEY=your-api-key
-   ```
-
-## Automation
-
-### Manual Execution
-
 ```bash
-# Run script manually
-python3 scripts/pull_sales_pipeline.py
+SALES_PIPELINE_SOURCE=mycrm
+SALES_PIPELINE_API_KEY=your-api-key
+SALES_PIPELINE_ENDPOINT=https://api.mycrm.com/deals
 ```
-
-### Scheduled Execution (Cron)
-
-Add to crontab for daily pulls:
-
-```bash
-# Pull sales pipeline data daily at 8 AM
-0 8 * * * cd /path/to/Avidelta && python3 scripts/pull_sales_pipeline.py
-```
-
-### GitHub Actions
-
-Create `.github/workflows/sales-pipeline.yml`:
-
-```yaml
-name: Pull Sales Pipeline Data
-on:
-  schedule:
-    - cron: '0 8 * * *'  # Daily at 8 AM UTC
-  workflow_dispatch:
-
-jobs:
-  pull-pipeline:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - run: pip install -r scripts/requirements.txt
-      - run: python3 scripts/pull_sales_pipeline.py
-        env:
-          SALES_PIPELINE_SOURCE: ${{ secrets.SALES_PIPELINE_SOURCE }}
-          SALES_PIPELINE_API_KEY: ${{ secrets.SALES_PIPELINE_API_KEY }}
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add output/sales_pipeline.json
-          git commit -m "Update sales pipeline data" || echo "No changes"
-          git push
-```
-
-## Files
-
-- `scripts/pull_sales_pipeline.py` - Main script for pulling pipeline data
-- `scripts/lib/clients.py` - `SalesPipelineClient` class with source integrations
-- `scripts/lib/models.py` - `SalesPipelineData` data model
-- `app/api/sales-pipeline/route.ts` - API endpoint for serving data
-- `output/sales_pipeline.json` - Latest pipeline data
-- `output/backups/sales_pipeline_*.json` - Timestamped backups
 
 ## Troubleshooting
 
-**Issue: Script fails with "Module not found"**
+### Issue: "Sales pipeline module not available"
+
+**Cause**: Import error in `daily_v2.py`
+
+**Solution**: Ensure `scripts/lib/sales_pipeline.py` exists and has no syntax errors:
+
 ```bash
-# Install dependencies
-pip install -r scripts/requirements.txt
+python3 -c "from lib.sales_pipeline import create_sales_pipeline_source"
 ```
 
-**Issue: API endpoint returns demo data**
-```bash
-# Run the script to generate real data
-python3 scripts/pull_sales_pipeline.py
+### Issue: Falls back to demo data in production
 
-# Verify output file exists
-ls -la output/sales_pipeline.json
+**Cause**: CRM integration not yet implemented or API key invalid
+
+**Solution**:
+1. Check that `SALES_PIPELINE_SOURCE` is set correctly
+2. Verify `SALES_PIPELINE_API_KEY` is valid
+3. Check logs for specific error messages
+
+### Issue: Cache directory permission error
+
+**Cause**: No write access to `output/sales_cache/`
+
+**Solution**: Create directory with proper permissions:
+
+```bash
+mkdir -p output/sales_cache
+chmod 755 output/sales_cache
 ```
 
-**Issue: Permission denied**
-```bash
-# Make script executable
-chmod +x scripts/pull_sales_pipeline.py
-```
+## Best Practices
 
-## Security
+1. **Schedule Regular Pulls**: Run automation daily to track pipeline trends
+2. **Monitor Cache Size**: Periodically clean old cache files (>30 days)
+3. **Validate Data Quality**: Check for anomalies in lead counts and values
+4. **Secure API Keys**: Never commit `.env.local` to version control
+5. **Test in Demo Mode**: Always test changes with `--demo` flag first
 
-- API keys are stored in `.env.local` (gitignored)
-- Never commit credentials to version control
-- Use GitHub Secrets for GitHub Actions workflows
-- Validate and sanitize any external data
+## Future Enhancements
 
-## Next Steps
+- [ ] Implement HubSpot integration
+- [ ] Implement Salesforce integration
+- [ ] Implement Pipedrive integration
+- [ ] Add pipeline trend analysis
+- [ ] Create visualization dashboard
+- [ ] Add alerting for significant pipeline changes
+- [ ] Support custom field mapping
+- [ ] Add data validation and quality checks
 
-1. Configure your actual CRM data source
-2. Set up scheduled automation (cron or GitHub Actions)
-3. Build dashboard visualizations using the `/api/sales-pipeline` endpoint
-4. Add alerting for pipeline changes
+## Related Documentation
+
+- [AUTOMATION_GUIDE.md](../AUTOMATION_GUIDE.md) - Complete automation documentation
+- [ARCHITECTURE.md](../ARCHITECTURE.md) - System architecture overview
+- [SETUP.md](../SETUP.md) - Environment setup guide
 
 ---
 
-**Created:** 2025-12-10  
-**Version:** 1.0.0
+**Last Updated:** 2025-12-10  
+**Version:** 1.0.0  
+**Module:** Sales Pipeline Automation
+>>>>>>> main
