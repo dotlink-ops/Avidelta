@@ -156,8 +156,27 @@ class DailyAutomation:
               dependencies are missing.
         """
         self.project_root = Path(__file__).parent.parent
-        self.demo_mode = demo_mode or not HAS_DEPS
+        # Respect the explicit demo_mode flag only; do not force demo_mode when
+        # dependencies are missing. Missing deps are a runtime error unless the
+        # user explicitly opts into demo mode.
+        self.demo_mode = demo_mode
         self.config = AutomationConfig.load(self.demo_mode, self.project_root)
+
+        # If runtime dependencies are not present and the user did not request
+        # demo mode, fail fast with a clear message.
+        if not HAS_DEPS and not self.demo_mode:
+            raise RuntimeError(
+                "Required Python dependencies are missing. Install with: pip install -r scripts/requirements.txt"
+            )
+
+        # If required environment variables (OpenAI / GitHub creds) are missing
+        # and we're not in demo mode, raise with a helpful message.
+        missing_env = self.config.missing_required()
+        if missing_env and not self.demo_mode:
+            raise RuntimeError(
+                "Required environment variables are missing: " + ", ".join(missing_env) +
+                ". Set them in .env.local or export before running, or run with --demo to bypass external API calls."
+            )
 
         self.output_dir = self.config.output_dir
         self.notes_source = self.config.notes_source

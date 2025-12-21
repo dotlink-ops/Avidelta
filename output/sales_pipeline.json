@@ -1,114 +1,71 @@
 {
-  "timestamp": "2025-12-10T20:33:02.748183+00:00",
-  "source": "demo",
-  "total_pipeline_value": 500000,
-  "deals_count": 8,
-  "deals": [
+  "timestamp": "2025-12-20T18:44:43.120644+00:00",
+  "total_leads": 5,
+  "total_value": 462000.0,
+  "weighted_value": 254500.0,
+  "stage_breakdown": {
+    "Qualification": 2,
+    "Proposal": 1,
+    "Negotiation": 1,
+    "Closed Won": 1
+  },
+  "leads": [
     {
-      "id": "DEAL-001",
-      "name": "Enterprise Platform Migration - Acme Corp",
-      "value": 85000,
-      "stage": "Proposal Sent",
-      "probability": 60,
-      "close_date": "2025-12-25",
-      "contact": "Sarah Johnson",
-      "company": "Acme Corp"
+      "id": "lead-001",
+      "name": "Enterprise Integration Project",
+      "company": "TechCorp Solutions",
+      "stage": "Qualification",
+      "value": 150000.0,
+      "probability": 0.3,
+      "owner": "Sales Rep A",
+      "created_at": "2025-11-15T10:00:00Z",
+      "updated_at": "2025-12-09T14:30:00Z"
     },
     {
-      "id": "DEAL-002",
-      "name": "API Integration Services - TechStart Inc",
-      "value": 45000,
+      "id": "lead-002",
+      "name": "Automation Platform Migration",
+      "company": "FinTech Innovators",
+      "stage": "Proposal",
+      "value": 85000.0,
+      "probability": 0.5,
+      "owner": "Sales Rep B",
+      "created_at": "2025-11-20T09:15:00Z",
+      "updated_at": "2025-12-10T11:20:00Z"
+    },
+    {
+      "id": "lead-003",
+      "name": "API Integration Services",
+      "company": "RetailHub Inc",
       "stage": "Negotiation",
-      "probability": 75,
-      "close_date": "2025-12-18",
-      "contact": "Mike Chen",
-      "company": "TechStart Inc"
+      "value": 45000.0,
+      "probability": 0.7,
+      "owner": "Sales Rep A",
+      "created_at": "2025-11-25T13:45:00Z",
+      "updated_at": "2025-12-10T16:00:00Z"
     },
     {
-      "id": "DEAL-003",
-      "name": "Automation Consulting - Global Solutions",
-      "value": 120000,
-      "stage": "Discovery",
-      "probability": 30,
-      "close_date": "2026-01-24",
-      "contact": "Emma Davis",
-      "company": "Global Solutions"
+      "id": "lead-004",
+      "name": "Data Pipeline Optimization",
+      "company": "Analytics Pro",
+      "stage": "Qualification",
+      "value": 62000.0,
+      "probability": 0.25,
+      "owner": "Sales Rep C",
+      "created_at": "2025-12-01T08:30:00Z",
+      "updated_at": "2025-12-08T10:45:00Z"
     },
     {
-      "id": "DEAL-004",
-      "name": "Data Pipeline Setup - StartupXYZ",
-      "value": 15000,
+      "id": "lead-005",
+      "name": "Cloud Infrastructure Setup",
+      "company": "StartupXYZ",
       "stage": "Closed Won",
-      "probability": 100,
-      "close_date": "2025-12-07",
-      "contact": "James Wilson",
-      "company": "StartupXYZ"
-    },
-    {
-      "id": "DEAL-005",
-      "name": "Security Audit - FinTech Partners",
-      "value": 20000,
-      "stage": "Proposal Sent",
-      "probability": 50,
-      "close_date": "2025-12-30",
-      "contact": "Lisa Brown",
-      "company": "FinTech Partners"
-    },
-    {
-      "id": "DEAL-006",
-      "name": "Cloud Infrastructure Migration - RetailCo",
-      "value": 95000,
-      "stage": "Discovery",
-      "probability": 40,
-      "close_date": "2026-01-14",
-      "contact": "David Martinez",
-      "company": "RetailCo"
-    },
-    {
-      "id": "DEAL-007",
-      "name": "DevOps Transformation - MediaGroup",
-      "value": 65000,
-      "stage": "Negotiation",
-      "probability": 70,
-      "close_date": "2025-12-22",
-      "contact": "Rachel Kim",
-      "company": "MediaGroup"
-    },
-    {
-      "id": "DEAL-008",
-      "name": "AI Implementation - HealthTech",
-      "value": 55000,
-      "stage": "Proposal Sent",
-      "probability": 55,
-      "close_date": "2025-12-28",
-      "contact": "Tom Anderson",
-      "company": "HealthTech"
+      "value": 120000.0,
+      "probability": 1.0,
+      "owner": "Sales Rep B",
+      "created_at": "2025-10-15T11:00:00Z",
+      "updated_at": "2025-12-05T14:00:00Z"
     }
   ],
-  "metrics": {
-    "active_deals": 7,
-    "closed_won": 1,
-    "avg_deal_size": 62500,
-    "weighted_pipeline": 296250,
-    "stages": {
-      "Discovery": 2,
-      "Proposal Sent": 3,
-      "Negotiation": 2,
-      "Closed Won": 1
-    }
-  },
-  "top_opportunities": [
-    {
-      "name": "Automation Consulting",
-      "value": 120000
-    },
-    {
-      "name": "Cloud Infrastructure Migration",
-      "value": 95000
-    },
-    {
-      "name": "Enterprise Platform Migration",
-      "value": 85000
-    }
-  ]
+  "source": "demo",
+  "demo": true
 }
