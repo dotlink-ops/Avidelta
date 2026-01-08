@@ -11,6 +11,7 @@ Integrates with CRM systems and sales tracking tools.
 import json
 import logging
 import os
+import urllib.parse
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
@@ -32,6 +33,22 @@ class SalesPipelineConfig:
     api_endpoint: Optional[str] = None
     cache_dir: Optional[Path] = None
     demo_mode: bool = False
+
+    # Salesforce-specific config (optional; only used when data_source == 'salesforce')
+    salesforce_login_url: Optional[str] = None
+    salesforce_instance_url: Optional[str] = None
+    salesforce_api_version: str = "60.0"
+    salesforce_soql: Optional[str] = None
+    salesforce_client_id: Optional[str] = None
+    salesforce_client_secret: Optional[str] = None
+    salesforce_username: Optional[str] = None
+    salesforce_password: Optional[str] = None
+    salesforce_security_token: Optional[str] = None
+
+    # Supabase sink (optional)
+    supabase_url: Optional[str] = None
+    supabase_service_role_key: Optional[str] = None
+    supabase_sales_pipeline_table: str = "sales_pipeline_snapshots"
     
     @classmethod
     def from_env(cls, project_root: Path, demo_mode: bool = False) -> "SalesPipelineConfig":
@@ -47,6 +64,20 @@ class SalesPipelineConfig:
         """
         data_source = os.getenv("SALES_PIPELINE_SOURCE", "demo")
         cache_dir = Path(os.getenv("SALES_PIPELINE_CACHE", str(project_root / DEFAULT_CACHE_DIR)))
+
+        # Salesforce defaults
+        default_soql = (
+            "SELECT Id, Name, Account.Name, StageName, Amount, Probability, Owner.Name, "
+            "CreatedDate, LastModifiedDate "
+            "FROM Opportunity "
+            "WHERE IsClosed = false "
+            "ORDER BY LastModifiedDate DESC "
+            "LIMIT 200"
+        )
+
+        # Supabase defaults (prefer Next.js naming for URL)
+        supabase_url = os.getenv("SUPABASE_URL") or os.getenv("NEXT_PUBLIC_SUPABASE_URL")
+        supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
         
         return cls(
             data_source=data_source if not demo_mode else "demo",
@@ -54,7 +85,37 @@ class SalesPipelineConfig:
             api_endpoint=os.getenv("SALES_PIPELINE_ENDPOINT"),
             cache_dir=cache_dir,
             demo_mode=demo_mode,
+
+            salesforce_login_url=os.getenv("SALESFORCE_LOGIN_URL") or "https://login.salesforce.com",
+            salesforce_instance_url=os.getenv("SALESFORCE_INSTANCE_URL") or os.getenv("SALES_PIPELINE_ENDPOINT"),
+            salesforce_api_version=os.getenv("SALESFORCE_API_VERSION") or "60.0",
+            salesforce_soql=os.getenv("SALESFORCE_SOQL") or default_soql,
+            salesforce_client_id=os.getenv("SALESFORCE_CLIENT_ID"),
+            salesforce_client_secret=os.getenv("SALESFORCE_CLIENT_SECRET"),
+            salesforce_username=os.getenv("SALESFORCE_USERNAME"),
+            salesforce_password=os.getenv("SALESFORCE_PASSWORD"),
+            salesforce_security_token=os.getenv("SALESFORCE_SECURITY_TOKEN"),
+
+            supabase_url=supabase_url,
+            supabase_service_role_key=supabase_key,
+            supabase_sales_pipeline_table=os.getenv("SUPABASE_SALES_PIPELINE_TABLE")
+            or "sales_pipeline_snapshots",
         )
+
+
+def _safe_float(value: Any, default: float = 0.0) -> float:
+    try:
+        if value is None:
+            return default
+        if isinstance(value, str) and not value.strip():
+            return default
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _clamp(value: float, min_value: float, max_value: float) -> float:
+    return max(min_value, min(max_value, value))
 
 
 @dataclass
@@ -276,12 +337,216 @@ class SalesPipelineDataSource:
         return self._demo_data()
     
     def _pull_salesforce(self) -> SalesPipelineData:
-        """Pull data from Salesforce CRM (placeholder for future implementation)."""
-        if not self.config.api_key:
-            raise RuntimeError("Salesforce API key not configured")
-        
-        logger.info("Salesforce integration not yet implemented, using demo data")
-        return self._demo_data()
+        """Pull data from Salesforce via REST API + SOQL query.
+
+        Supported auth modes (in priority order):
+        1) Pre-issued token + instance URL:
+           - SALESFORCE_ACCESS_TOKEN or SALES_PIPELINE_API_KEY
+           - SALESFORCE_INSTANCE_URL or SALES_PIPELINE_ENDPOINT
+
+        2) OAuth password grant:
+           - SALESFORCE_LOGIN_URL (default https://login.salesforce.com)
+           - SALESFORCE_CLIENT_ID / SALESFORCE_CLIENT_SECRET
+           - SALESFORCE_USERNAME
+           - SALESFORCE_PASSWORD
+           - SALESFORCE_SECURITY_TOKEN (optional depending on org policy)
+        """
+        try:
+            import requests  # type: ignore
+        except Exception as e:
+            raise RuntimeError(
+                "Missing 'requests' dependency for Salesforce integration. "
+                "Install with: pip install -r scripts/requirements.txt"
+            ) from e
+
+        access_token = os.getenv("SALESFORCE_ACCESS_TOKEN") or self.config.api_key
+        instance_url = self.config.salesforce_instance_url
+        api_version = self.config.salesforce_api_version
+        soql = self.config.salesforce_soql
+        if not soql:
+            raise RuntimeError("Salesforce SOQL query not configured")
+
+        if not access_token or not instance_url:
+            # Attempt OAuth password grant
+            if not (
+                self.config.salesforce_client_id
+                and self.config.salesforce_client_secret
+                and self.config.salesforce_username
+                and self.config.salesforce_password
+            ):
+                raise RuntimeError(
+                    "Salesforce credentials not configured. Provide either "
+                    "SALESFORCE_ACCESS_TOKEN + SALESFORCE_INSTANCE_URL, or "
+                    "Salesforce OAuth password-grant variables."
+                )
+
+            login_url = self.config.salesforce_login_url or "https://login.salesforce.com"
+            token_url = f"{login_url.rstrip('/')}/services/oauth2/token"
+            password = self.config.salesforce_password
+            if self.config.salesforce_security_token:
+                password = f"{password}{self.config.salesforce_security_token}"
+
+            logger.info("Authenticating to Salesforce (password grant)...")
+            resp = requests.post(
+                token_url,
+                data={
+                    "grant_type": "password",
+                    "client_id": self.config.salesforce_client_id,
+                    "client_secret": self.config.salesforce_client_secret,
+                    "username": self.config.salesforce_username,
+                    "password": password,
+                },
+                timeout=30,
+            )
+            if not resp.ok:
+                raise RuntimeError(
+                    f"Salesforce auth failed (HTTP {resp.status_code}). "
+                    f"Check credentials and org security settings."
+                )
+            token_data = resp.json()
+            access_token = str(token_data.get("access_token") or "").strip()
+            instance_url = str(token_data.get("instance_url") or "").strip()
+            if not access_token or not instance_url:
+                raise RuntimeError("Salesforce auth response missing access_token/instance_url")
+
+        assert access_token is not None
+        assert instance_url is not None
+
+        # Run SOQL query with pagination
+        base = instance_url.rstrip("/")
+        query_url = (
+            f"{base}/services/data/v{api_version}/query"
+            f"?q={urllib.parse.quote_plus(soql)}"
+        )
+        headers = {"Authorization": f"Bearer {access_token}", "Accept": "application/json"}
+
+        logger.info("Querying Salesforce Opportunities...")
+        records: List[Dict[str, Any]] = []
+        next_url: Optional[str] = query_url
+        while next_url:
+            resp = requests.get(next_url, headers=headers, timeout=30)
+            if not resp.ok:
+                raise RuntimeError(
+                    f"Salesforce query failed (HTTP {resp.status_code}). "
+                    "Verify SOQL and permissions."
+                )
+            payload = resp.json()
+            batch = payload.get("records") or []
+            if isinstance(batch, list):
+                records.extend([r for r in batch if isinstance(r, dict)])
+
+            done = bool(payload.get("done"))
+            next_records_url = payload.get("nextRecordsUrl")
+            if not done and isinstance(next_records_url, str) and next_records_url.strip():
+                next_url = f"{base}{next_records_url}"
+            else:
+                next_url = None
+
+        # Normalize into repository schema
+        timestamp = datetime.now(timezone.utc).isoformat()
+        leads: List[SalesPipelineLead] = []
+        for rec in records:
+            opp_id = str(rec.get("Id") or "").strip()
+            if not opp_id:
+                continue
+
+            account = rec.get("Account") if isinstance(rec.get("Account"), dict) else {}
+            owner = rec.get("Owner") if isinstance(rec.get("Owner"), dict) else {}
+
+            probability_pct = _safe_float(rec.get("Probability"), 0.0)
+            probability = _clamp(probability_pct / 100.0, 0.0, 1.0)
+
+            leads.append(
+                SalesPipelineLead(
+                    id=opp_id,
+                    name=str(rec.get("Name") or "").strip(),
+                    company=str(account.get("Name") or "").strip(),
+                    stage=str(rec.get("StageName") or "").strip() or "Unknown",
+                    value=_safe_float(rec.get("Amount"), 0.0),
+                    probability=probability,
+                    owner=str(owner.get("Name") or "").strip(),
+                    created_at=str(rec.get("CreatedDate") or "").strip(),
+                    updated_at=str(rec.get("LastModifiedDate") or "").strip(),
+                )
+            )
+
+        total_value = sum(lead.value for lead in leads)
+        weighted_value = sum(lead.value * lead.probability for lead in leads)
+        stage_breakdown: Dict[str, int] = {}
+        for lead in leads:
+            stage_breakdown[lead.stage] = stage_breakdown.get(lead.stage, 0) + 1
+
+        logger.info(
+            "✓ Pulled Salesforce sales pipeline data",
+            extra={
+                "total_leads": len(leads),
+                "total_value": total_value,
+                "weighted_value": weighted_value,
+            },
+        )
+
+        return SalesPipelineData(
+            timestamp=timestamp,
+            total_leads=len(leads),
+            total_value=total_value,
+            weighted_value=weighted_value,
+            stage_breakdown=stage_breakdown,
+            leads=leads,
+            source="salesforce",
+            demo=False,
+        )
+
+    def try_upsert_to_supabase(self, data: SalesPipelineData) -> bool:
+        """Best-effort upsert of the pipeline snapshot to Supabase via PostgREST.
+
+        This is intentionally non-fatal: if Supabase isn't configured (or table is missing),
+        this returns False and logs a warning.
+
+        Expected table schema (recommended):
+        - timestamp text UNIQUE
+        - source text
+        - demo boolean
+        - payload jsonb
+        """
+        if not (self.config.supabase_url and self.config.supabase_service_role_key):
+            logger.debug("Supabase not configured; skipping sales pipeline upsert")
+            return False
+
+        try:
+            import requests  # type: ignore
+        except Exception:
+            logger.warning("Missing 'requests'; cannot upsert sales pipeline to Supabase")
+            return False
+
+        supabase_url = self.config.supabase_url.rstrip("/")
+        table = self.config.supabase_sales_pipeline_table
+        endpoint = f"{supabase_url}/rest/v1/{table}?on_conflict=timestamp"
+        headers = {
+            "apikey": self.config.supabase_service_role_key,
+            "Authorization": f"Bearer {self.config.supabase_service_role_key}",
+            "Content-Type": "application/json",
+            "Prefer": "resolution=merge-duplicates,return=minimal",
+        }
+        row = {
+            "timestamp": data.timestamp,
+            "source": data.source,
+            "demo": data.demo,
+            "payload": data.to_dict(),
+        }
+
+        try:
+            resp = requests.post(endpoint, headers=headers, json=[row], timeout=30)
+            if not resp.ok:
+                logger.warning(
+                    "Supabase upsert failed for sales pipeline snapshot",
+                    extra={"status": resp.status_code},
+                )
+                return False
+            logger.info("✓ Upserted sales pipeline snapshot to Supabase")
+            return True
+        except Exception as e:
+            logger.warning(f"Supabase upsert error: {e}")
+            return False
     
     def _pull_pipedrive(self) -> SalesPipelineData:
         """Pull data from Pipedrive CRM (placeholder for future implementation)."""

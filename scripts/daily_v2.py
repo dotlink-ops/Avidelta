@@ -616,6 +616,20 @@ class DailyAutomation:
                 logger.debug(f"  Cached: {cache_file}")
             except Exception as e:
                 logger.warning(f"Failed to cache pipeline data: {e}")
+
+            # Best-effort Supabase upsert (non-fatal)
+            try:
+                upsert_fn = getattr(pipeline_source, "try_upsert_to_supabase", None)
+                if callable(upsert_fn):
+                    upserted = bool(upsert_fn(pipeline_data))
+                    if upserted:
+                        logger.info("  Supabase: upserted sales pipeline snapshot")
+                    else:
+                        logger.debug("  Supabase: skipped or failed upsert")
+                else:
+                    logger.debug("  Supabase: data source does not support upsert")
+            except Exception as e:
+                logger.warning(f"Supabase upsert failed (non-fatal): {e}")
             
             logger.info("✓ Sales pipeline data pull complete")
             return pipeline_data.to_dict()
