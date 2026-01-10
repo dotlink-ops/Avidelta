@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverActions: false,
-  },
+  // Intentionally minimal. Keep experimental flags in `next.config.ts`.
 };
 
 export default nextConfig;
