@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
+    "build:webpack": "next build --webpack",
+    "build:turbo": "next build --turbo",
     "start": "next start",
     "lint": "eslint",
     "test:e2e": "node scripts/e2e/test-automation-status.mjs",
